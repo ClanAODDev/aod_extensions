@@ -1,0 +1,20 @@
+{
+  "name": "dcdeaton/clanaod_extensions",
+  "require": {
+    "j7mbo/twitter-api-php": "~1.0"
+  },
+  "require-dev": {
+    "symfony/var-dumper": "~3.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "ClanAOD\\": "src/Extensions/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Chris Deaton",
+      "email": "dcdeaton@ncsu.edu"
+    }
+  ]
+}
