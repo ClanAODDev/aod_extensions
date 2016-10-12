@@ -4,10 +4,6 @@ namespace ClanAOD;
 
 class Extensions
 {
-    private $handlers = [
-        ShortCodes\Section::class
-    ];
-
     public function __construct()
     {
         add_action('init', [$this, 'shortcodeUIDetection']);
@@ -17,9 +13,8 @@ class Extensions
 
     private function init()
     {
-        foreach ($this->handlers as $handler) {
-            new $handler();
-        }
+        // init our shortcodes
+        new ShortCodes\Section();
     }
 
     /**
