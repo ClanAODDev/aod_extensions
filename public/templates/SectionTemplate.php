@@ -1,6 +1,16 @@
-<section class="<?= $attr['section_name'] ?>">
-    <div class="content-container <?= ((bool) $attr['centered']) ? 'centered' : null; ?>">
+<?php
+/**
+ * Section Shortcode Template
+ */
+?>
+
+<section class="<?= $sectionClasses ?>">
+    <div class="content-container <?= $centerContent ?>">
         <h1><?= $attr['section_title'] ?></h1>
-        <?= $content ?>
+        <?php if ( ! empty($sectionImage)): ?>
+            <p class="short-width"><?= $content ?></p>
+        <?php else: ?>
+            <p><?= $content ?></p>
+        <?php endif; ?>
     </div>
 </section>

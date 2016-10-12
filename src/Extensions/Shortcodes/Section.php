@@ -18,29 +18,56 @@ class Section
 
     public $fields = [
         [
-            'label' => 'CSS Class Name',
-            'type' => 'text',
-            'attr' => 'section_name'
-        ],
-        [
-            'label' => 'Center content?',
-            'type' => 'checkbox',
-            'attr' => 'centered'
-        ],
-        [
             'label' => 'Section Title',
             'type' => 'text',
             'attr' => 'section_title'
         ],
+        [
+            'label' => 'Section Class (optional)',
+            'type' => 'text',
+            'attr' => 'section_name',
+            'meta' => [
+                'placeholder' => 'CSS Class Name'
+            ]
+        ],
+        [
+            'label' => 'Section Graphic (optional)',
+            'type' => 'attachment',
+            'attr' => 'section_img',
+            'libraryType' => ['image'],
+            'addButton' => 'Select Image',
+            'frameTitle' => 'Add section image'
+        ],
+        [
+            'label' => 'Center content',
+            'type' => 'checkbox',
+            'attr' => 'centered'
+        ],
+        [
+            'label' => 'Show shadow',
+            'type' => 'checkbox',
+            'attr' => 'show_shadow'
+        ],
+
     ];
 
     public function callback($attr, $content, $tag)
     {
         $attr = shortcode_atts([
-            'section_name' => '',
+            'section_name' => 'section',
             'section_title' => '',
-            'centered' => false
+            'show_shadow' => false,
+            'section_img' => 0,
+            'centered' => false,
         ], $attr, $tag);
+
+        /**
+         * Handle attribute logic
+         */
+        $withShadow = ((bool) $attr['show_shadow']) ? 'with-shadow' : null;
+        $sectionClasses = "{$attr['section_name']} {$withShadow}";
+        $centerContent = ((bool) $attr['centered']) ? 'centered' : null;
+        $sectionImage = (wp_kses_post(wp_get_attachment_image($attr['section_img'])));
 
         require(AOD_TEMPLATES . '/SectionTemplate.php');
     }
@@ -57,6 +84,5 @@ class Section
         ];
 
         shortcode_ui_register_for_shortcode('section', $arguments);
-
     }
 }

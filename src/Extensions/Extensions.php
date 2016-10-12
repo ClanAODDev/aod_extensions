@@ -14,7 +14,7 @@ class Extensions
     private function init()
     {
         // init our shortcodes
-        new ShortCodes\Section();
+        new Shortcodes\Section();
     }
 
     /**

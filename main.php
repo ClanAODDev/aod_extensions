@@ -8,6 +8,8 @@
  * Author URI:  https://clanaod.net/
  */
 
+use ClanAOD\Extensions;
+
 defined('ABSPATH') or die();
 
 define('AOD_ROOT', dirname(__FILE__));
@@ -15,4 +17,4 @@ define('AOD_TEMPLATES', AOD_ROOT . '/public/templates/');
 
 require __DIR__ . '/vendor/autoload.php';
 
-new \ClanAOD\Extensions();
+new Extensions();
