@@ -8,9 +8,9 @@
     <div class="content-container <?= $centerContent ?>">
         <h1><?= $attr['section_title'] ?></h1>
         <?php if ( ! empty($sectionImage)): ?>
-            <div class="short-width"><?= $content ?></div>
+            <div class="short-width"><?= wpautop($content) ?></div>
         <?php else: ?>
-            <p><?= $content ?></p>
+            <?= wpautop($content) ?>
         <?php endif; ?>
     </div>
 </section>
