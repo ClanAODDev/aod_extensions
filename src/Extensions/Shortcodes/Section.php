@@ -23,14 +23,6 @@ class Section
             'attr' => 'section_title'
         ],
         [
-            'label' => 'Section Class (optional)',
-            'type' => 'text',
-            'attr' => 'section_name',
-            'meta' => [
-                'placeholder' => 'CSS Class Name'
-            ]
-        ],
-        [
             'label' => 'Section Graphic (optional)',
             'type' => 'attachment',
             'attr' => 'section_img',
@@ -48,24 +40,31 @@ class Section
             'type' => 'checkbox',
             'attr' => 'show_shadow'
         ],
-
+        [
+            'label' => 'Section Class (optional)',
+            'type' => 'text',
+            'attr' => 'section_class',
+            'meta' => [
+                'placeholder' => 'CSS Class Name'
+            ]
+        ],
     ];
 
     public function callback($attr, $content, $tag)
     {
         $attr = shortcode_atts([
-            'section_name' => 'section',
             'section_title' => '',
             'show_shadow' => false,
             'section_img' => 0,
             'centered' => false,
+            'section_class' => 'section',
         ], $attr, $tag);
 
         /**
          * Handle attribute logic
          */
         $withShadow = ((bool) $attr['show_shadow']) ? 'with-shadow' : null;
-        $sectionClasses = "{$attr['section_name']} {$withShadow}";
+        $sectionClasses = "{$attr['section_class']} {$withShadow}";
         $centerContent = ((bool) $attr['centered']) ? 'centered' : null;
         $sectionImage = (wp_kses_post(wp_get_attachment_image($attr['section_img'])));
 
@@ -75,11 +74,11 @@ class Section
     public function registerWithShortcake()
     {
         $arguments = [
-            'label' => 'Section',
+            'label' => 'Landing Page Section',
             'listItemImage' => 'dashicons-admin-page',
             'attrs' => $this->fields,
             'inner_content' => [
-                'label' => 'Content'
+                'label' => 'Section Content'
             ]
         ];
 
