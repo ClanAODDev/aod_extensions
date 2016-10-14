@@ -5,10 +5,10 @@
 ?>
 
 <section class="<?= $sectionClasses ?>">
-    <div class="content-container <?= $centerContent ?>">
+    <div class="section-content-container <?= $centerContent ?>">
         <?php if ( ! empty($sectionImage)): ?>
-            <div class="short-width">
-                <div class="blurb">
+            <div class="section--short-width">
+                <div class="section-blurb">
                     <h1><?= $attr['section_title'] ?></h1>
                     <?= wpautop($content) ?>
                 </div>
@@ -18,7 +18,7 @@
             </div>
         <?php else: ?>
             <h1><?= $attr['section_title'] ?></h1>
-            <div class="blurb">
+            <div class="section-blurb">
                 <?= wpautop($content) ?>
             </div>
         <?php endif; ?>

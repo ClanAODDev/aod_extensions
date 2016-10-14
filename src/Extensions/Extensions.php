@@ -15,6 +15,7 @@ class Extensions
     {
         // init our shortcodes
         new Shortcodes\Section();
+        new Shortcodes\ClanAnnouncements();
     }
 
     /**

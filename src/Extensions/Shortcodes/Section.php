@@ -65,7 +65,7 @@ class Section
          */
         $withShadow = ((bool) $attr['show_shadow']) ? 'with-shadow' : null;
         $sectionClasses = "{$attr['section_class']} {$withShadow}";
-        $centerContent = ((bool) $attr['centered']) ? 'centered' : null;
+        $centerContent = ((bool) $attr['centered']) ? 'section--centered' : null;
         $sectionImage = (wp_kses_post(wp_get_attachment_image($attr['section_img'])));
 
         require(AOD_TEMPLATES . '/SectionTemplate.php');
