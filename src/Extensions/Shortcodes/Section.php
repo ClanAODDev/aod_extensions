@@ -76,6 +76,7 @@ class Section
         $arguments = [
             'label' => 'Landing Page Section',
             'listItemImage' => 'dashicons-admin-page',
+            'post-type' => ['page'],
             'attrs' => $this->fields,
             'inner_content' => [
                 'label' => 'Section Content'

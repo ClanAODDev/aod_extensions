@@ -15,7 +15,11 @@ class Extensions
     {
         // init our shortcodes
         new Shortcodes\Section();
+        new Shortcodes\DivisionSection();
         new Shortcodes\ClanAnnouncements();
+
+        // init post types
+        new PostTypes\Divisions();
     }
 
     /**
