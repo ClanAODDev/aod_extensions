@@ -18,7 +18,10 @@ class Extensions
         new Shortcodes\DivisionSection();
         new Shortcodes\ClanAnnouncements();
 
-        // init post types
+        // metaboxes
+        new Metaboxes\Divisions();
+
+        // post types
         new PostTypes\Divisions();
     }
 
