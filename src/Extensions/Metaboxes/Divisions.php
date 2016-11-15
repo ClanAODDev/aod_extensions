@@ -10,17 +10,6 @@ class Divisions
 
     private $fields = [
         [
-            'id' => 'header-image',
-            'label' => 'Header image',
-            'type' => 'media',
-        ],
-        [
-            'id' => 'game-icon',
-            'label' => 'Game Icon',
-            'type' => 'media',
-        ],
-
-        [
             'id' => 'abbreviation',
             'label' => 'Abbreviation',
             'type' => 'text',

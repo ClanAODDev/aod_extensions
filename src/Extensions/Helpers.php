@@ -31,4 +31,9 @@ class Helpers
     {
         return str_replace(' ', '-', strtolower($url));
     }
+
+    public static function getField($prefix, $field, $id)
+    {
+        return get_post_meta($id, $prefix . $field, true);
+    }
 }
