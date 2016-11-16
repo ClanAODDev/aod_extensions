@@ -18,6 +18,8 @@ class TwitterFeed
         'include_rts' => false
     ];
 
+    private $cacheFile = 'twitter_stream.data';
+
     public function __construct($config)
     {
         $this->config = $config;
@@ -33,11 +35,7 @@ class TwitterFeed
      */
     public function callback()
     {
-        $twitter = new TwitterAPIExchange($this->settings());
-
-        $feed = json_decode($twitter->setGetfield(http_build_query($this->fields))
-            ->buildOauth($this->url, $this->method)
-            ->performRequest());
+        $feed = $this->fetchData();
 
         require(AOD_TEMPLATES . '/TwitterFeedTemplate.php');
     }
@@ -57,5 +55,36 @@ class TwitterFeed
             'consumer_key' => $twitter['consumer_key'],
             'consumer_secret' => $twitter['consumer_secret']
         ];
+    }
+
+    /**
+     * Fetch data and build a cache file
+     */
+    private function fetchData()
+    {
+        if (file_exists($this->cacheFile)) {
+            $data = unserialize(file_get_contents($this->cacheFile));
+            if ($data['timestamp'] > time() - 10 * 60) {
+                $feed = $data['twitter_result'];
+            }
+        }
+
+        if (empty($feed)) {
+
+            $twitter = new TwitterAPIExchange($this->settings());
+
+            $feed = json_decode($twitter->setGetfield(http_build_query($this->fields))
+                ->buildOauth($this->url, $this->method)
+                ->performRequest());
+
+            $data = [
+                'twitter_result' => $feed,
+                'timestamp' => time()
+            ];
+
+            file_put_contents($this->cacheFile, serialize($data));
+        }
+
+        return $feed;
     }
 }
