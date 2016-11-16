@@ -54,8 +54,8 @@ class TwitterFeed
      */
     private function fetchData()
     {
-        if (file_exists($this->cacheFile)) {
-            $data = unserialize(file_get_contents($this->cacheFile));
+        if (file_exists(AOD_ROOT . $this->cacheFile)) {
+            $data = unserialize(file_get_contents(AOD_ROOT . $this->cacheFile));
             if ($data['timestamp'] > time() - 10 * 60) {
                 $feed = $data['twitter_result'];
             }
@@ -74,7 +74,7 @@ class TwitterFeed
                 'timestamp' => time()
             ];
 
-            file_put_contents($this->cacheFile, serialize($data));
+            file_put_contents(AOD_ROOT . $this->cacheFile, serialize($data));
         }
 
         return $feed;
