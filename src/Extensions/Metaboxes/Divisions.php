@@ -16,9 +16,6 @@ class Divisions
         ],
     ];
 
-    /**
-     * Class construct method. Adds actions to their respective WordPress hooks.
-     */
     public function __construct()
     {
         add_action('add_meta_boxes', [$this, 'add_meta_boxes']);
@@ -26,10 +23,6 @@ class Divisions
         add_action('save_post', [$this, 'save_post']);
     }
 
-    /**
-     * Hooks into WordPress' add_meta_boxes function.
-     * Goes through screens (post types) and adds the meta box.
-     */
     public function add_meta_boxes()
     {
         foreach ($this->screens as $screen) {
@@ -44,21 +37,12 @@ class Divisions
         }
     }
 
-    /**
-     * Generates the HTML for the meta box
-     *
-     * @param object $post WordPress post object
-     */
     public function add_meta_box_callback($post)
     {
         wp_nonce_field('division_settings_data', 'division_settings_nonce');
         $this->generate_fields($post);
     }
 
-    /**
-     * Hooks into WordPress' admin_footer function.
-     * Adds scripts for media uploader.
-     */
     public function admin_footer()
     {
         ?>
@@ -92,9 +76,6 @@ class Divisions
         </script><?php
     }
 
-    /**
-     * Generates the field's HTML for the meta box.
-     */
     public function generate_fields($post)
     {
         $output = '';
@@ -126,9 +107,6 @@ class Divisions
         echo $output;
     }
 
-    /**
-     * Hooks into WordPress' save_post function
-     */
     public function save_post($post_id)
     {
         if ( ! isset($_POST['division_settings_nonce'])) {

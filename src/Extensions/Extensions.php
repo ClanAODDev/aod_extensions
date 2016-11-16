@@ -11,12 +11,18 @@ class Extensions
         $this->init();
     }
 
+    /**
+     * Initialize all the components of our plugin
+     */
     private function init()
     {
+        $config = require(AOD_ROOT . '/config.php');
+
         // init our shortcodes
         new Shortcodes\Section();
         new Shortcodes\DivisionSection();
         new Shortcodes\ClanAnnouncements();
+        new Shortcodes\TwitterFeed($config['api']['twitter']);
 
         // metaboxes
         new Metaboxes\Divisions();
