@@ -16,6 +16,10 @@ class Extensions
      */
     private function init()
     {
+        if ( ! file_exists(AOD_ROOT . '/config.php')) {
+            wp_die(require(AOD_TEMPLATES . '/InvalidConfigTemplate.php'));
+        }
+
         $config = require(AOD_ROOT . '/config.php');
 
         // init our shortcodes

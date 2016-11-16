@@ -12,7 +12,7 @@ use ClanAOD\Extensions;
 
 global $clanaod_config;
 
-$clanaod_config = require('config.php');
+$clanaod_config = require('_config.php');
 
 defined('ABSPATH') or die();
 
