@@ -10,14 +10,6 @@ class TwitterFeed
 
     private $method = 'GET';
 
-    private $fields = [
-        'screen_name' => 'officialclanaod',
-        'count' => 5,
-        'trim_user' => true,
-        'exclude_replies' => true,
-        'include_rts' => false
-    ];
-
     private $cacheFile = 'twitter_stream.data';
 
     public function __construct($config)
@@ -73,7 +65,7 @@ class TwitterFeed
 
             $twitter = new TwitterAPIExchange($this->settings());
 
-            $feed = json_decode($twitter->setGetfield(http_build_query($this->fields))
+            $feed = json_decode($twitter->setGetfield(http_build_query($this->config['twitter_config']))
                 ->buildOauth($this->url, $this->method)
                 ->performRequest());
 
