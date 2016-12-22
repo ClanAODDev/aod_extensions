@@ -5,7 +5,11 @@
     <?php foreach ($feed as $entry): ?>
         <li><a href="https://twitter.com/officialclanaod"
                target="_blank">@officialclanaod</a>
-            <?= Helpers::urlify($entry->text) ?>
+            <?php if (is_object($entry->retweeted_status)): ?>
+                <?= Helpers::twitterize($entry->retweeted_status->text); ?>
+            <?php else: ?>
+                <?= Helpers::twitterize($entry->text); ?>
+            <?php endif; ?>
         </li>
     <?php endforeach; ?>
 </ul>
