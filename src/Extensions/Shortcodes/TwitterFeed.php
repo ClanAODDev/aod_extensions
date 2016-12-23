@@ -10,7 +10,7 @@ class TwitterFeed
 
     private $method = 'GET';
 
-    private $cacheFile = 'twitter_stream.data';
+    private $cacheFile = './cache/twitter_stream.data';
 
     public function __construct($config)
     {
