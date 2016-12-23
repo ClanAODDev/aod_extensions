@@ -8,7 +8,9 @@ class DivisionRepository
     {
         $args = [
             'posts_per_page' => -1,
-            'post_type' => 'divisions'
+            'post_type' => 'divisions',
+            'orderby' => 'title',
+            'order' => 'ASC'
         ];
 
         return get_posts($args);
