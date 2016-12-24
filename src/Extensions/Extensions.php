@@ -22,10 +22,10 @@ class Extensions
 
         $config = require(AOD_ROOT . '/config.php');
 
-        // init our shortcodes
-        new Shortcodes\Section();
-        new Shortcodes\DivisionSection();
-        new Shortcodes\ClanAnnouncements();
+        $this->initShortcodes();
+
+
+        // twitter feed
         new Shortcodes\TwitterFeed($config['api']['twitter']);
 
         // metaboxes
@@ -50,5 +50,13 @@ class Extensions
         if (current_user_can('activate_plugins')) {
             require(AOD_TEMPLATES . '/RequiresShortcakeUI.php');
         }
+    }
+
+    private function initShortcodes()
+    {
+        new Shortcodes\LandingPageSection();
+        new Shortcodes\DivisionSection();
+        new Shortcodes\ClanAnnouncements();
+        new Shortcodes\HistorySection();
     }
 }

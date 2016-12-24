@@ -3,48 +3,47 @@
 namespace ClanAOD\Shortcodes;
 
 /**
- * Class LandingPageSection
+ * Class HistorySection
  * @package ClanAOD\Shortcodes
  */
-class DivisionSection
+class HistorySection
 {
-
     public function __construct()
     {
-        add_shortcode('division-section', [$this, 'callback']);
+        add_shortcode('history-section', [$this, 'callback']);
 
         add_action('register_shortcode_ui', [$this, 'registerWithShortcake']);
     }
 
     public $fields = [
         [
-            'label' => 'Section Title',
+            'label' => 'Date text',
             'type' => 'text',
-            'attr' => 'section_title'
+            'attr' => 'date_text'
         ],
     ];
 
     public function callback($attr, $content, $tag)
     {
         $attr = shortcode_atts([
-            'section_title' => '',
+            'date_text' => '',
         ], $attr, $tag);
 
-        require(AOD_TEMPLATES . '/DivisionSectionTemplate.php');
+        require(AOD_TEMPLATES . '/HistorySectionTemplate.php');
     }
 
     public function registerWithShortcake()
     {
         $arguments = [
-            'label' => 'Division Content Section',
+            'label' => 'History Content Section',
             'listItemImage' => 'dashicons-admin-page',
-            'post-type' => ['divisions'],
+            'post-type' => 'page',
             'attrs' => $this->fields,
             'inner_content' => [
                 'label' => 'Section Content'
             ]
         ];
 
-        shortcode_ui_register_for_shortcode('division-section', $arguments);
+        shortcode_ui_register_for_shortcode('history-section', $arguments);
     }
 }

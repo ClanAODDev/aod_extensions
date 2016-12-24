@@ -3,10 +3,10 @@
 namespace ClanAOD\Shortcodes;
 
 /**
- * Class Section
+ * Class LandingPageSection
  * @package ClanAOD\Shortcodes
  */
-class Section
+class LandingPageSection
 {
 
     public function __construct()
@@ -68,7 +68,7 @@ class Section
         $centerContent = ((bool) $attr['centered']) ? 'section--centered' : null;
         $sectionImage = (wp_kses_post(wp_get_attachment_image($attr['section_img'], 'full')));
 
-        require(AOD_TEMPLATES . '/SectionTemplate.php');
+        require(AOD_TEMPLATES . '/LandingPageSectionTemplate.php');
     }
 
     public function registerWithShortcake()
