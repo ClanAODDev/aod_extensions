@@ -5,7 +5,7 @@
     </div>
 
     <div class="cd-timeline-content">
-        <h2><?= $attrs['section_title'] ?></h2>
+        <h2><?= $attr['section_title'] ?></h2>
         <?= wpautop($content) ?>
         <h2 class="cd-date"><?= $attr['date_text'] ?></h2>
     </div>
