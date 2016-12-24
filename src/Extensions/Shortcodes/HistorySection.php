@@ -21,12 +21,18 @@ class HistorySection
             'type' => 'text',
             'attr' => 'date_text'
         ],
+        [
+            'label' => 'Section title',
+            'type' => 'text',
+            'attr' => 'section_title'
+        ],
     ];
 
     public function callback($attr, $content, $tag)
     {
         $attr = shortcode_atts([
             'date_text' => '',
+            'section_title' => '',
         ], $attr, $tag);
 
         require(AOD_TEMPLATES . '/HistorySectionTemplate.php');
