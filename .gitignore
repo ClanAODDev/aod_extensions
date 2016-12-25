@@ -1,3 +1,4 @@
 config.php
 .DS_Store
-twitter_stream.data
+
+/cache/*

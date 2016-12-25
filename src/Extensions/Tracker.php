@@ -16,7 +16,6 @@ class Tracker
 
     private $base = "https://aod-tracker.tk/v1/api/";
 
-
     /**
      * @return object
      */
