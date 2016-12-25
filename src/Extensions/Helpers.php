@@ -2,6 +2,7 @@
 
 namespace ClanAOD;
 
+use ClanAOD\Tracker;
 use SimpleXMLElement;
 
 class Helpers
@@ -64,5 +65,19 @@ class Helpers
         return self::uniquify(
             self::urlify($string)
         );
+    }
+
+    /**
+     *
+     */
+    public static function filterDivisionCounts($divisions)
+    {
+        $data = [];
+
+        foreach ($divisions as $division) {
+            $data[$division->abbreviation] = $division->member_count;
+        }
+
+        return $data;
     }
 }

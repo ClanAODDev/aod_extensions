@@ -17,4 +17,3 @@ define('AOD_TEMPLATES', AOD_ROOT . '/public/templates/');
 require __DIR__ . '/vendor/autoload.php';
 
 new Extensions();
-
