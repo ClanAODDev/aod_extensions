@@ -20,7 +20,8 @@ class LandingPageSection
         [
             'label' => 'Section Title',
             'type' => 'text',
-            'attr' => 'section_title'
+            'attr' => 'section_title',
+            'encode' => true
         ],
         [
             'label' => 'Section Graphic (optional)',
@@ -59,6 +60,8 @@ class LandingPageSection
             'centered' => false,
             'section_class' => 'section',
         ], $attr, $tag);
+
+        $attr['section_title'] = urldecode($attr['section_title']);
 
         /**
          * Handle attribute logic
