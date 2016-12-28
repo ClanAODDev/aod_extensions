@@ -15,7 +15,7 @@ class Divisions
             'type' => 'text',
         ],
         [
-            'id' => 'game_icon',
+            'id' => 'division_icon',
             'label' => 'Division Icon',
             'type' => 'media'
         ]
