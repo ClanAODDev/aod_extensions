@@ -67,8 +67,8 @@ class LandingPageSection
          * Handle attribute logic
          */
         $withShadow = ((bool) $attr['show_shadow']) ? 'with-shadow' : null;
-        $sectionClasses = "{$attr['section_class']} {$withShadow}";
         $centerContent = ((bool) $attr['centered']) ? 'section--centered' : null;
+        $sectionClasses = "{$attr['section_class']} {$withShadow}";
         $sectionImage = (wp_kses_post(wp_get_attachment_image($attr['section_img'], 'full')));
 
         require(AOD_TEMPLATES . '/LandingPageSectionTemplate.php');

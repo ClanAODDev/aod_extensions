@@ -14,6 +14,11 @@ class Divisions
             'label' => 'Abbreviation',
             'type' => 'text',
         ],
+        [
+            'id' => 'game_icon',
+            'label' => 'Division Icon',
+            'type' => 'media'
+        ]
     ];
 
     public function __construct()
