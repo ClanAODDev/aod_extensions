@@ -68,7 +68,7 @@ class Extensions
         <style type="text/css">
             #login h1 a, .login h1 a {
                 background-image: url('http://wordpress.clanaod.net/wp-content/uploads/2016/12/admin-ajax-e1482993879861.png');
-                padding-bottom: 30px;
+                padding-bottom: 10px;
             }
         </style>
         <?php
