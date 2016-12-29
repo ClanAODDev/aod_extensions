@@ -18,7 +18,12 @@ class Divisions
             'id' => 'division_icon',
             'label' => 'Division Icon',
             'type' => 'media'
-        ]
+        ],
+        [
+            'id' => 'application_id',
+            'label' => 'Forum Application ID',
+            'type' => 'text'
+        ],
     ];
 
     public function __construct()
