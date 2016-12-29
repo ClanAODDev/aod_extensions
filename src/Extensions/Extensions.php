@@ -24,6 +24,9 @@ class Extensions
 
         $this->initShortcodes();
 
+        // custom stuff
+        add_action('login_enqueue_scripts', [$this, 'customLoginPage']);
+
         // twitter feed
         new Shortcodes\TwitterFeed($config['api']['twitter']);
 
@@ -74,8 +77,6 @@ function customLoginPage()
     </style>
 <?php }
 
-add_action('login_enqueue_scripts', 'customLoginPage');
-
 function aodLogoUrl()
 {
     return home_url();
@@ -83,9 +84,9 @@ function aodLogoUrl()
 
 add_filter('login_headerurl', 'aodLogoUrl');
 
-function aodLogoUrlTitle()
+function aodSiteTitle()
 {
     return 'ClanAOD.net';
 }
 
-add_filter('login_headertitle', 'aodLogoUrlTitle');
+add_filter('login_headertitle', 'aodSiteTitle');
