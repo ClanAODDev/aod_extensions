@@ -4,7 +4,12 @@ namespace ClanAOD;
 
 use ClanAOD\Tracker;
 use SimpleXMLElement;
+use stdClass;
 
+/**
+ * Class Helpers
+ * @package ClanAOD
+ */
 class Helpers
 {
     /**
@@ -33,11 +38,21 @@ class Helpers
         return str_replace(' ', '-', strtolower($url));
     }
 
+    /**
+     * @param $prefix
+     * @param $field
+     * @param $id
+     * @return mixed
+     */
     public static function getField($prefix, $field, $id)
     {
         return get_post_meta($id, $prefix . $field, true);
     }
 
+    /**
+     * @param $string
+     * @return mixed
+     */
     private function urlify($string)
     {
         $regex = "/(http|https)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
@@ -60,6 +75,10 @@ class Helpers
         return implode(" ", $arr);
     }
 
+    /**
+     * @param $string
+     * @return string
+     */
     public static function twitterize($string)
     {
         return self::uniquify(
@@ -68,14 +87,15 @@ class Helpers
     }
 
     /**
-     *
+     * @param array $divisions
+     * @return array
      */
-    public static function filterDivisionCounts($divisions)
+    public static function filterDivisionCounts(array $divisions)
     {
         $data = [];
 
         foreach ($divisions as $division) {
-            $data[$division->abbreviation] = $division->member_count;
+            $data[$division->abbreviation] = $division->members;
         }
 
         return $data;
