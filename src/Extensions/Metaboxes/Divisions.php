@@ -15,6 +15,11 @@ class Divisions
             'type' => 'text',
         ],
         [
+            'id' => 'header_image',
+            'label' => 'Header Image',
+            'type' => 'media'
+        ],
+        [
             'id' => 'division_icon',
             'label' => 'Division Icon',
             'type' => 'media'

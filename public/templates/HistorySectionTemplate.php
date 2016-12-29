@@ -1,12 +1,11 @@
-<div class="cd-timeline-block">
+<div class="timeline-block">
 
-    <div class="cd-timeline-img cd-location">
+    <div class="timeline-bullet cd-location">
         <img src="<?php echo get_template_directory_uri() . "/public/images/cd-icon-location.svg" ?>" alt="Picture">
     </div>
 
-    <div class="cd-timeline-content">
+    <div class="timeline-content">
         <h2><?= $attr['section_title'] ?></h2>
         <?= wpautop($content) ?>
-        <h2 class="cd-date"><?= $attr['date_text'] ?></h2>
     </div>
 </div>
