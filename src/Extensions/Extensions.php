@@ -24,8 +24,6 @@ class Extensions
 
         $this->initShortcodes();
 
-        // custom stuff
-        add_action('login_enqueue_scripts', [$this, 'customLoginPage']);
 
         // twitter feed
         new Shortcodes\TwitterFeed($config['api']['twitter']);
@@ -35,6 +33,11 @@ class Extensions
 
         // post types
         new PostTypes\Divisions();
+
+        // custom stuff
+        add_action('login_enqueue_scripts', [$this, 'customLoginPage']);
+        add_filter('login_headerurl', [$this, 'aodLogoUrl']);
+        add_filter('login_headertitle', [$this, 'aodSiteTitle']);
     }
 
     /**
@@ -61,32 +64,32 @@ class Extensions
         new Shortcodes\ClanAnnouncements();
         new Shortcodes\HistorySection();
     }
+
+    /**
+     * AOD Customizations
+     */
+
+
+    public function customLoginPage()
+    { ?>
+        <style type="text/css">
+            #login h1 a, .login h1 a {
+                background-image: url('http://wordpress.clanaod.net/wp-content/uploads/2016/12/admin-ajax-e1482993879861.png');
+                padding-bottom: 10px;
+            }
+        </style>
+    <?php }
+
+    function aodLogoUrl()
+    {
+        return home_url();
+    }
+
+    function aodSiteTitle()
+    {
+        return 'ClanAOD.net';
+    }
 }
 
-/**
- * AOD Customizations
- */
 
-function customLoginPage()
-{ ?>
-    <style type="text/css">
-        #login h1 a, .login h1 a {
-            background-image: url('http://wordpress.clanaod.net/wp-content/uploads/2016/12/admin-ajax-e1482993879861.png');
-            padding-bottom: 10px;
-        }
-    </style>
-<?php }
 
-function aodLogoUrl()
-{
-    return home_url();
-}
-
-add_filter('login_headerurl', 'aodLogoUrl');
-
-function aodSiteTitle()
-{
-    return 'ClanAOD.net';
-}
-
-add_filter('login_headertitle', 'aodSiteTitle');
