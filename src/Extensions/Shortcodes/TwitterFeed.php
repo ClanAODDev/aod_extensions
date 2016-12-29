@@ -2,20 +2,14 @@
 
 namespace ClanAOD\Shortcodes;
 
-use TwitterAPIExchange;
+use ClanAOD\DBCache;
+use ClanAOD\Twitter;
 
 class TwitterFeed
 {
-    private $url = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
 
-    private $method = 'GET';
-
-    private $cacheFile = './cache/twitter_stream.data';
-
-    public function __construct($config)
+    public function __construct()
     {
-        $this->config = $config;
-
         add_shortcode('twitter-feed', [$this, 'callback']);
     }
 
@@ -33,50 +27,27 @@ class TwitterFeed
     }
 
     /**
-     * Fetch Twitter API credentials
-     *
-     * @return array
-     */
-    private function settings()
-    {
-        $twitter = $this->config;
-
-        return [
-            'oauth_access_token' => $twitter['oauth_access_token'],
-            'oauth_access_token_secret' => $twitter['oauth_access_token_secret'],
-            'consumer_key' => $twitter['consumer_key'],
-            'consumer_secret' => $twitter['consumer_secret']
-        ];
-    }
-
-    /**
      * Fetch data and build a cache file
      */
     private function fetchData()
     {
-        $cacheFile = trailingslashit(AOD_ROOT) . ($this->cacheFile);
-
-        if (file_exists($cacheFile)) {
-            $data = unserialize(file_get_contents($cacheFile));
-            if ($data['timestamp'] > time() - 10 * 60) {
-                $feed = $data['twitter_result'];
+        $twitter_data = DBCache::get('twitter_data');
+        if (is_array($twitter_data)) {
+            if ($twitter_data['timestamp'] > time() - 10 * 60) {
+                $feed = $twitter_data['divisions'];
             }
         }
 
         if (empty($feed)) {
 
-            $twitter = new TwitterAPIExchange($this->settings());
-
-            $feed = json_decode($twitter->setGetfield(http_build_query($this->config['twitter_config']))
-                ->buildOauth($this->url, $this->method)
-                ->performRequest());
+            $feed = (new Twitter())->getfeed();
 
             $data = [
                 'twitter_result' => $feed,
                 'timestamp' => time()
             ];
 
-            file_put_contents($cacheFile, serialize($data));
+            DBCache::store('twitter_data', $data);
         }
 
         return $feed;

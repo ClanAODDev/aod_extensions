@@ -20,13 +20,7 @@ class Extensions
             wp_die(require(AOD_TEMPLATES . '/InvalidConfigTemplate.php'));
         }
 
-        $config = require(AOD_ROOT . '/config.php');
-
         $this->initShortcodes();
-
-
-        // twitter feed
-        new Shortcodes\TwitterFeed($config['api']['twitter']);
 
         // metaboxes
         new Metaboxes\Divisions();
@@ -63,12 +57,13 @@ class Extensions
         new Shortcodes\DivisionSection();
         new Shortcodes\ClanAnnouncements();
         new Shortcodes\HistorySection();
+        new Shortcodes\TwitterFeed();
     }
+
 
     /**
      * AOD Customizations
      */
-
 
     public function customLoginPage()
     { ?>

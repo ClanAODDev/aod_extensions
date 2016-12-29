@@ -48,12 +48,10 @@ class Tracker
      */
     public function getDivisionInfo()
     {
-        $cacheFile = trailingslashit(AOD_ROOT) . ('./cache/division_data.data');
-
-        if (file_exists($cacheFile)) {
-            $data = unserialize(file_get_contents($cacheFile));
-            if ($data['timestamp'] > time() - 10 * 60) {
-                $feed = $data['divisions'];
+        $division_data = DBCache::get('division_data');
+        if (is_array($division_data)) {
+            if ($division_data['timestamp'] > time() - 10 * 60) {
+                $feed = $division_data['divisions'];
             }
         }
 
@@ -71,7 +69,7 @@ class Tracker
                 'timestamp' => time()
             ];
 
-            file_put_contents($cacheFile, serialize($data));
+            DBCache::store('division_data', $data);
         }
 
         return $feed->data;
