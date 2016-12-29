@@ -15,9 +15,9 @@ class Divisions
             'type' => 'text',
         ],
         [
-            'id' => 'header_image',
-            'label' => 'Header Image',
-            'type' => 'media'
+            'id' => 'application_id',
+            'label' => 'Forum Application ID',
+            'type' => 'text'
         ],
         [
             'id' => 'division_icon',
@@ -25,9 +25,9 @@ class Divisions
             'type' => 'media'
         ],
         [
-            'id' => 'application_id',
-            'label' => 'Forum Application ID',
-            'type' => 'text'
+            'id' => 'header_image',
+            'label' => 'Header Image',
+            'type' => 'media'
         ],
     ];
 
@@ -47,7 +47,7 @@ class Divisions
                 [$this, 'add_meta_box_callback'],
                 $screen,
                 'side',
-                'default'
+                'high'
             );
         }
     }
@@ -100,7 +100,7 @@ class Divisions
             switch ($field['type']) {
                 case 'media':
                     $input = sprintf(
-                        '<input id="%s" name="%s" type="text" value="%s"> <input class="button rational-metabox-media" id="%s_button" name="%s_button" type="button" value="Upload" />',
+                        '<input id="%s" name="%s" type="text" value="%s" required> <input class="button rational-metabox-media" id="%s_button" name="%s_button" type="button" value="Upload" />',
                         $field['id'],
                         $field['id'],
                         $db_value,
@@ -110,7 +110,7 @@ class Divisions
                     break;
                 default:
                     $input = sprintf(
-                        '<input id="%s" name="%s" type="%s" value="%s">',
+                        '<input id="%s" name="%s" type="%s" value="%s" required>',
                         $field['id'],
                         $field['id'],
                         $field['type'],
