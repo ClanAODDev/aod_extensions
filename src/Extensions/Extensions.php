@@ -24,6 +24,8 @@ class Extensions
 
         $this->initShortcodes();
 
+        // custom stuff
+        add_action( 'login_enqueue_scripts', [$this, 'customLoginPage'] );
 
         // twitter feed
         new Shortcodes\TwitterFeed($config['api']['twitter']);
@@ -58,5 +60,17 @@ class Extensions
         new Shortcodes\DivisionSection();
         new Shortcodes\ClanAnnouncements();
         new Shortcodes\HistorySection();
+    }
+
+    public function customLoginPage()
+    {
+        ?>
+        <style type="text/css">
+            #login h1 a, .login h1 a {
+                background-image: url('http://wordpress.clanaod.net/wp-content/uploads/2016/12/admin-ajax-e1482993879861.png');
+                padding-bottom: 30px;
+            }
+        </style>
+        <?php
     }
 }
