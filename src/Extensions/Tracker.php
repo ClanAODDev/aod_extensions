@@ -13,13 +13,11 @@ class Tracker
     /**
      * @var
      */
-    private $url;
-
+    public $data;
     /**
      * @var
      */
-    public $data;
-
+    private $url;
     /**
      * @var string
      */
@@ -61,29 +59,18 @@ class Tracker
                 'Accept: application/json',
                 'Content-type: application/json',
                 'Authorization: Bearer ' .
-                $this->config['api']['tracker']['oauth_access_token']
+                $this->config['api']['tracker']['oauth_access_token'],
             ])->request();
 
             $data = [
                 'divisions' => $feed,
-                'timestamp' => time()
+                'timestamp' => time(),
             ];
 
             DBCache::store('division_data', $data);
         }
 
         return $feed->data;
-    }
-
-    /**
-     * @param $string
-     * @return $this
-     */
-    private function setURL($string)
-    {
-        $this->url = $this->base . $string;
-
-        return $this;
     }
 
     /**
@@ -110,6 +97,17 @@ class Tracker
     public function setHeaders($headers)
     {
         $this->headers = $headers;
+
+        return $this;
+    }
+
+    /**
+     * @param $string
+     * @return $this
+     */
+    private function setURL($string)
+    {
+        $this->url = $this->base . $string;
 
         return $this;
     }

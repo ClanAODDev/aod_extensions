@@ -10,7 +10,7 @@ class DivisionRepository
             'posts_per_page' => -1,
             'post_type' => 'divisions',
             'orderby' => 'title',
-            'order' => 'ASC'
+            'order' => 'ASC',
         ];
 
         return get_posts($args);

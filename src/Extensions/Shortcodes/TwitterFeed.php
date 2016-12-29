@@ -44,7 +44,7 @@ class TwitterFeed
 
             $data = [
                 'twitter_result' => $feed,
-                'timestamp' => time()
+                'timestamp' => time(),
             ];
 
             DBCache::store('twitter_data', $data);

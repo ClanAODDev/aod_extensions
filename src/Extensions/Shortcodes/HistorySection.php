@@ -8,25 +8,25 @@ namespace ClanAOD\Shortcodes;
  */
 class HistorySection
 {
+    public $fields = [
+        [
+            'label' => 'Date text',
+            'type' => 'text',
+            'attr' => 'date_text',
+        ],
+        [
+            'label' => 'Section title',
+            'type' => 'text',
+            'attr' => 'section_title',
+        ],
+    ];
+
     public function __construct()
     {
         add_shortcode('history-section', [$this, 'callback']);
 
         add_action('register_shortcode_ui', [$this, 'registerWithShortcake']);
     }
-
-    public $fields = [
-        [
-            'label' => 'Date text',
-            'type' => 'text',
-            'attr' => 'date_text'
-        ],
-        [
-            'label' => 'Section title',
-            'type' => 'text',
-            'attr' => 'section_title'
-        ],
-    ];
 
     public function callback($attr, $content, $tag)
     {
@@ -46,8 +46,8 @@ class HistorySection
             'post-type' => 'page',
             'attrs' => $this->fields,
             'inner_content' => [
-                'label' => 'Section Content'
-            ]
+                'label' => 'Section Content',
+            ],
         ];
 
         shortcode_ui_register_for_shortcode('history-section', $arguments);

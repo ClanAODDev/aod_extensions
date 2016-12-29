@@ -2,9 +2,7 @@
 
 namespace ClanAOD;
 
-use ClanAOD\Tracker;
 use SimpleXMLElement;
-use stdClass;
 
 /**
  * Class Helpers
@@ -51,15 +49,13 @@ class Helpers
 
     /**
      * @param $string
-     * @return mixed
+     * @return string
      */
-    private function urlify($string)
+    public static function twitterize($string)
     {
-        $regex = "/(http|https)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
-
-        return (preg_match($regex, $string, $url))
-            ? preg_replace($regex, "<a href=\"{$url[0]}\" target='_blank'>{$url[0]}</a> ", $string)
-            : $string;
+        return self::uniquify(
+            self::urlify($string)
+        );
     }
 
     /**
@@ -77,13 +73,15 @@ class Helpers
 
     /**
      * @param $string
-     * @return string
+     * @return mixed
      */
-    public static function twitterize($string)
+    private function urlify($string)
     {
-        return self::uniquify(
-            self::urlify($string)
-        );
+        $regex = "/(http|https)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
+
+        return (preg_match($regex, $string, $url))
+            ? preg_replace($regex, "<a href=\"{$url[0]}\" target='_blank'>{$url[0]}</a> ", $string)
+            : $string;
     }
 
     /**

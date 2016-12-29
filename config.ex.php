@@ -21,10 +21,10 @@ return $config = [
                 'count' => 5,
                 'trim_user' => true,
                 'exclude_replies' => true,
-                'include_rts' => false
-            ]
+                'include_rts' => false,
+            ],
 
-        ]
+        ],
 
-    ]
+    ],
 ];

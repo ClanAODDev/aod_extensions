@@ -17,17 +17,17 @@ class Divisions
         [
             'id' => 'application_id',
             'label' => 'Forum Application ID',
-            'type' => 'text'
+            'type' => 'text',
         ],
         [
             'id' => 'division_icon',
             'label' => 'Division Icon',
-            'type' => 'media'
+            'type' => 'media',
         ],
         [
             'id' => 'header_image',
             'label' => 'Header Image',
-            'type' => 'media'
+            'type' => 'media',
         ],
     ];
 
@@ -56,6 +56,37 @@ class Divisions
     {
         wp_nonce_field('division_settings_data', 'division_settings_nonce');
         $this->generate_fields($post);
+    }
+
+    public function generate_fields($post)
+    {
+        $output = '';
+        foreach ($this->fields as $field) {
+            $label = '<label for="' . $field['id'] . '">' . $field['label'] . '</label>';
+            $db_value = get_post_meta($post->ID, 'division_settings_' . $field['id'], true);
+            switch ($field['type']) {
+                case 'media':
+                    $input = sprintf(
+                        '<input id="%s" name="%s" type="text" value="%s" required> <input class="button rational-metabox-media" id="%s_button" name="%s_button" type="button" value="Upload" />',
+                        $field['id'],
+                        $field['id'],
+                        $db_value,
+                        $field['id'],
+                        $field['id']
+                    );
+                    break;
+                default:
+                    $input = sprintf(
+                        '<input id="%s" name="%s" type="%s" value="%s" required>',
+                        $field['id'],
+                        $field['id'],
+                        $field['type'],
+                        $db_value
+                    );
+            }
+            $output .= '<p>' . $label . '<br>' . $input . '</p>';
+        }
+        echo $output;
     }
 
     public function admin_footer()
@@ -89,37 +120,6 @@ class Divisions
                 }
             });
         </script><?php
-    }
-
-    public function generate_fields($post)
-    {
-        $output = '';
-        foreach ($this->fields as $field) {
-            $label = '<label for="' . $field['id'] . '">' . $field['label'] . '</label>';
-            $db_value = get_post_meta($post->ID, 'division_settings_' . $field['id'], true);
-            switch ($field['type']) {
-                case 'media':
-                    $input = sprintf(
-                        '<input id="%s" name="%s" type="text" value="%s" required> <input class="button rational-metabox-media" id="%s_button" name="%s_button" type="button" value="Upload" />',
-                        $field['id'],
-                        $field['id'],
-                        $db_value,
-                        $field['id'],
-                        $field['id']
-                    );
-                    break;
-                default:
-                    $input = sprintf(
-                        '<input id="%s" name="%s" type="%s" value="%s" required>',
-                        $field['id'],
-                        $field['id'],
-                        $field['type'],
-                        $db_value
-                    );
-            }
-            $output .= '<p>' . $label . '<br>' . $input . '</p>';
-        }
-        echo $output;
     }
 
     public function save_post($post_id)

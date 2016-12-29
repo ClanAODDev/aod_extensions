@@ -9,19 +9,12 @@ namespace ClanAOD\Shortcodes;
 class LandingPageSection
 {
 
-    public function __construct()
-    {
-        add_shortcode('section', [$this, 'callback']);
-
-        add_action('register_shortcode_ui', [$this, 'registerWithShortcake']);
-    }
-
     public $fields = [
         [
             'label' => 'Section Title',
             'type' => 'text',
             'attr' => 'section_title',
-            'encode' => true
+            'encode' => true,
         ],
         [
             'label' => 'Section Graphic (optional)',
@@ -29,27 +22,34 @@ class LandingPageSection
             'attr' => 'section_img',
             'libraryType' => ['image'],
             'addButton' => 'Select Image',
-            'frameTitle' => 'Add section image'
+            'frameTitle' => 'Add section image',
         ],
         [
             'label' => 'Center content',
             'type' => 'checkbox',
-            'attr' => 'centered'
+            'attr' => 'centered',
         ],
         [
             'label' => 'Show shadow',
             'type' => 'checkbox',
-            'attr' => 'show_shadow'
+            'attr' => 'show_shadow',
         ],
         [
             'label' => 'Section Class (optional)',
             'type' => 'text',
             'attr' => 'section_class',
             'meta' => [
-                'placeholder' => 'CSS Class Name'
-            ]
+                'placeholder' => 'CSS Class Name',
+            ],
         ],
     ];
+
+    public function __construct()
+    {
+        add_shortcode('section', [$this, 'callback']);
+
+        add_action('register_shortcode_ui', [$this, 'registerWithShortcake']);
+    }
 
     public function callback($attr, $content, $tag)
     {
@@ -82,8 +82,8 @@ class LandingPageSection
             'post-type' => ['page'],
             'attrs' => $this->fields,
             'inner_content' => [
-                'label' => 'Section Content'
-            ]
+                'label' => 'Section Content',
+            ],
         ];
 
         shortcode_ui_register_for_shortcode('section', $arguments);

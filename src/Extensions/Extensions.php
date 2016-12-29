@@ -34,6 +34,15 @@ class Extensions
         add_filter('login_headertitle', [$this, 'aodSiteTitle']);
     }
 
+    private function initShortcodes()
+    {
+        new Shortcodes\LandingPageSection();
+        new Shortcodes\DivisionSection();
+        new Shortcodes\ClanAnnouncements();
+        new Shortcodes\HistorySection();
+        new Shortcodes\TwitterFeed();
+    }
+
     /**
      * Generate a notice if Shortcake is not enabled
      */
@@ -50,16 +59,6 @@ class Extensions
             require(AOD_TEMPLATES . '/RequiresShortcakeUI.php');
         }
     }
-
-    private function initShortcodes()
-    {
-        new Shortcodes\LandingPageSection();
-        new Shortcodes\DivisionSection();
-        new Shortcodes\ClanAnnouncements();
-        new Shortcodes\HistorySection();
-        new Shortcodes\TwitterFeed();
-    }
-
 
     /**
      * AOD Customizations

@@ -109,18 +109,18 @@ class PostType
      * @param mixed $post_type_names The name(s) of the post type, accepts (post type name, slug, plural, singular).
      * @param array $options User submitted options.
      */
-    function __construct($post_type_names, $options = array())
+    function __construct($post_type_names, $options = [])
     {
 
         // Check if post type names is a string or an array.
         if (is_array($post_type_names)) {
 
             // Add names to object.
-            $names = array(
+            $names = [
                 'singular',
                 'plural',
-                'slug'
-            );
+                'slug',
+            ];
 
             // Set the post type name.
             $this->post_type_name = $post_type_names['post_type_name'];
@@ -165,118 +165,27 @@ class PostType
         $this->options = $options;
 
         // Register taxonomies.
-        $this->add_action('init', array(&$this, 'register_taxonomies'));
+        $this->add_action('init', [&$this, 'register_taxonomies']);
 
         // Register the post type.
-        $this->add_action('init', array(&$this, 'register_post_type'));
+        $this->add_action('init', [&$this, 'register_post_type']);
 
         // Register exisiting taxonomies.
-        $this->add_action('init', array(&$this, 'register_exisiting_taxonomies'));
+        $this->add_action('init', [&$this, 'register_exisiting_taxonomies']);
 
         // Add taxonomy to admin edit columns.
-        $this->add_filter('manage_edit-' . $this->post_type_name . '_columns', array(&$this, 'add_admin_columns'));
+        $this->add_filter('manage_edit-' . $this->post_type_name . '_columns', [&$this, 'add_admin_columns']);
 
         // Populate the taxonomy columns with the posts terms.
         $this->add_action('manage_' . $this->post_type_name . '_posts_custom_column',
-            array(&$this, 'populate_admin_columns'), 10, 2);
+            [&$this, 'populate_admin_columns'], 10, 2);
 
         // Add filter select option to admin edit.
-        $this->add_action('restrict_manage_posts', array(&$this, 'add_taxonomy_filters'));
+        $this->add_action('restrict_manage_posts', [&$this, 'add_taxonomy_filters']);
 
         // rewrite post update messages
-        $this->add_filter('post_updated_messages', array(&$this, 'updated_messages'));
-        $this->add_filter('bulk_post_updated_messages', array(&$this, 'bulk_updated_messages'), 10, 2);
-    }
-
-    /**
-     * Get
-     *
-     * Helper function to get an object variable.
-     *
-     * @param string $var The variable you would like to retrieve.
-     * @return mixed Returns the value on success, boolean false whe it fails.
-     */
-    function get($var)
-    {
-
-        // If the variable exists.
-        if ($this->$var) {
-
-            // On success return the value.
-            return $this->$var;
-
-        } else {
-
-            // on fail return false
-            return false;
-        }
-    }
-
-    /**
-     * Set
-     *
-     * Helper function used to set an object variable. Can overwrite existsing
-     * variables or create new ones. Cannot overwrite reserved variables.
-     *
-     * @param mixed $var The variable you would like to create/overwrite.
-     * @param mixed $value The value you would like to set to the variable.
-     */
-    function set($var, $value)
-    {
-
-        // An array of reserved variables that cannot be overwritten.
-        $reserved = array(
-            'config',
-            'post_type_name',
-            'singular',
-            'plural',
-            'slug',
-            'options',
-            'taxonomies'
-        );
-
-        // If the variable is not a reserved variable
-        if ( ! in_array($var, $reserved)) {
-
-            // Write variable and value
-            $this->$var = $value;
-        }
-    }
-
-    /**
-     * Add Action
-     *
-     * Helper function to add add_action WordPress filters.
-     *
-     * @param string $action Name of the action.
-     * @param string $function Function to hook that will run on action.
-     * @param integet $priority Order in which to execute the function, relation to other functions hooked to this action.
-     * @param integer $accepted_args The number of arguments the function accepts.
-     */
-    function add_action($action, $function, $priority = 10, $accepted_args = 1)
-    {
-
-        // Pass variables into WordPress add_action function
-        add_action($action, $function, $priority, $accepted_args);
-    }
-
-    /**
-     * Add Filter
-     *
-     * Create add_filter WordPress filter.
-     *
-     * @see http://codex.wordpress.org/Function_Reference/add_filter
-     *
-     * @param  string $action Name of the action to hook to, e.g 'init'.
-     * @param  string $function Function to hook that will run on @action.
-     * @param  int $priority Order in which to execute the function, relation to other function hooked to this action.
-     * @param  int $accepted_args The number of arguements the function accepts.
-     */
-    function add_filter($action, $function, $priority = 10, $accepted_args = 1)
-    {
-
-        // Pass variables into Wordpress add_action function
-        add_filter($action, $function, $priority, $accepted_args);
+        $this->add_filter('post_updated_messages', [&$this, 'updated_messages']);
+        $this->add_filter('bulk_post_updated_messages', [&$this, 'bulk_updated_messages'], 10, 2);
     }
 
     /**
@@ -334,6 +243,31 @@ class PostType
     }
 
     /**
+     * Get human friendly
+     *
+     * Returns the human friendly name.
+     *
+     *    ucwords      capitalize words
+     *    strtolower   makes string lowercase before capitalizing
+     *    str_replace  replace all instances of hyphens and underscores to spaces
+     *
+     * @param string $name The name you want to make friendly.
+     * @return string The human friendly name.
+     */
+    function get_human_friendly($name = null)
+    {
+
+        // If no name is passed the post_type_name is used.
+        if ( ! isset($name)) {
+
+            $name = $this->post_type_name;
+        }
+
+        // Return human friendly name.
+        return ucwords(strtolower(str_replace("-", " ", str_replace("_", " ", $name))));
+    }
+
+    /**
      * Get singular
      *
      * Returns the friendly singular name.
@@ -360,28 +294,94 @@ class PostType
     }
 
     /**
-     * Get human friendly
+     * Add Action
      *
-     * Returns the human friendly name.
+     * Helper function to add add_action WordPress filters.
      *
-     *    ucwords      capitalize words
-     *    strtolower   makes string lowercase before capitalizing
-     *    str_replace  replace all instances of hyphens and underscores to spaces
-     *
-     * @param string $name The name you want to make friendly.
-     * @return string The human friendly name.
+     * @param string $action Name of the action.
+     * @param string $function Function to hook that will run on action.
+     * @param integet $priority Order in which to execute the function, relation to other functions hooked to this action.
+     * @param integer $accepted_args The number of arguments the function accepts.
      */
-    function get_human_friendly($name = null)
+    function add_action($action, $function, $priority = 10, $accepted_args = 1)
     {
 
-        // If no name is passed the post_type_name is used.
-        if ( ! isset($name)) {
+        // Pass variables into WordPress add_action function
+        add_action($action, $function, $priority, $accepted_args);
+    }
 
-            $name = $this->post_type_name;
+    /**
+     * Add Filter
+     *
+     * Create add_filter WordPress filter.
+     *
+     * @see http://codex.wordpress.org/Function_Reference/add_filter
+     *
+     * @param  string $action Name of the action to hook to, e.g 'init'.
+     * @param  string $function Function to hook that will run on @action.
+     * @param  int $priority Order in which to execute the function, relation to other function hooked to this action.
+     * @param  int $accepted_args The number of arguements the function accepts.
+     */
+    function add_filter($action, $function, $priority = 10, $accepted_args = 1)
+    {
+
+        // Pass variables into Wordpress add_action function
+        add_filter($action, $function, $priority, $accepted_args);
+    }
+
+    /**
+     * Get
+     *
+     * Helper function to get an object variable.
+     *
+     * @param string $var The variable you would like to retrieve.
+     * @return mixed Returns the value on success, boolean false whe it fails.
+     */
+    function get($var)
+    {
+
+        // If the variable exists.
+        if ($this->$var) {
+
+            // On success return the value.
+            return $this->$var;
+
+        } else {
+
+            // on fail return false
+            return false;
         }
+    }
 
-        // Return human friendly name.
-        return ucwords(strtolower(str_replace("-", " ", str_replace("_", " ", $name))));
+    /**
+     * Set
+     *
+     * Helper function used to set an object variable. Can overwrite existsing
+     * variables or create new ones. Cannot overwrite reserved variables.
+     *
+     * @param mixed $var The variable you would like to create/overwrite.
+     * @param mixed $value The value you would like to set to the variable.
+     */
+    function set($var, $value)
+    {
+
+        // An array of reserved variables that cannot be overwritten.
+        $reserved = [
+            'config',
+            'post_type_name',
+            'singular',
+            'plural',
+            'slug',
+            'options',
+            'taxonomies',
+        ];
+
+        // If the variable is not a reserved variable
+        if ( ! in_array($var, $reserved)) {
+
+            // Write variable and value
+            $this->$var = $value;
+        }
     }
 
     /**
@@ -398,7 +398,7 @@ class PostType
         $slug = $this->slug;
 
         // Default labels.
-        $labels = array(
+        $labels = [
             'name' => sprintf(__('%s', $this->textdomain), $plural),
             'singular_name' => sprintf(__('%s', $this->textdomain), $singular),
             'menu_name' => sprintf(__('%s', $this->textdomain), $plural),
@@ -411,17 +411,17 @@ class PostType
             'search_items' => sprintf(__('Search %s', $this->textdomain), $plural),
             'not_found' => sprintf(__('No %s found', $this->textdomain), $plural),
             'not_found_in_trash' => sprintf(__('No %s found in Trash', $this->textdomain), $plural),
-            'parent_item_colon' => sprintf(__('Parent %s:', $this->textdomain), $singular)
-        );
+            'parent_item_colon' => sprintf(__('Parent %s:', $this->textdomain), $singular),
+        ];
 
         // Default options.
-        $defaults = array(
+        $defaults = [
             'labels' => $labels,
             'public' => true,
-            'rewrite' => array(
+            'rewrite' => [
                 'slug' => $slug,
-            )
-        );
+            ],
+        ];
 
         // Merge user submitted options with defaults.
         $options = array_replace_recursive($defaults, $this->options);
@@ -445,18 +445,18 @@ class PostType
      * @param string $taxonomy_name The slug for the taxonomy.
      * @param array $options Taxonomy options.
      */
-    function register_taxonomy($taxonomy_names, $options = array())
+    function register_taxonomy($taxonomy_names, $options = [])
     {
 
         // Post type defaults to $this post type if unspecified.
         $post_type = $this->post_type_name;
 
         // An array of the names required excluding taxonomy_name.
-        $names = array(
+        $names = [
             'singular',
             'plural',
-            'slug'
-        );
+            'slug',
+        ];
 
         // if an array of names are passed
         if (is_array($taxonomy_names)) {
@@ -497,7 +497,7 @@ class PostType
         }
 
         // Default labels.
-        $labels = array(
+        $labels = [
             'name' => sprintf(__('%s', $this->textdomain), $plural),
             'singular_name' => sprintf(__('%s', $this->textdomain), $singular),
             'menu_name' => sprintf(__('%s', $this->textdomain), $plural),
@@ -515,16 +515,16 @@ class PostType
             'add_or_remove_items' => sprintf(__('Add or remove %s', $this->textdomain), $plural),
             'choose_from_most_used' => sprintf(__('Choose from most used %s', $this->textdomain), $plural),
             'not_found' => sprintf(__('No %s found', $this->textdomain), $plural),
-        );
+        ];
 
         // Default options.
-        $defaults = array(
+        $defaults = [
             'labels' => $labels,
             'hierarchical' => true,
-            'rewrite' => array(
-                'slug' => $slug
-            )
-        );
+            'rewrite' => [
+                'slug' => $slug,
+            ],
+        ];
 
         // Merge default options with user submitted options.
         $options = array_replace_recursive($defaults, $options);
@@ -595,7 +595,7 @@ class PostType
         // If no user columns have been specified, add taxonomies
         if ( ! isset($this->columns)) {
 
-            $new_columns = array();
+            $new_columns = [];
 
             // determine which column to add custom taxonomies after
             if (is_array($this->taxonomies) && in_array('post_tag',
@@ -679,7 +679,7 @@ class PostType
                 // If we have terms.
                 if ( ! empty($terms)) {
 
-                    $output = array();
+                    $output = [];
 
                     // Loop through each term, linking to the 'edit posts' page for the specific term.
                     foreach ($terms as $term) {
@@ -691,7 +691,7 @@ class PostType
                             '<a href="%s">%s</a>',
 
                             // Create filter url.
-                            esc_url(add_query_arg(array('post_type' => $post->post_type, $column => $term->slug),
+                            esc_url(add_query_arg(['post_type' => $post->post_type, $column => $term->slug],
                                 'edit.php')),
 
                             // Create friendly term name.
@@ -738,14 +738,14 @@ class PostType
             case 'icon' :
 
                 // Create the edit link.
-                $link = esc_url(add_query_arg(array('post' => $post->ID, 'action' => 'edit'), 'post.php'));
+                $link = esc_url(add_query_arg(['post' => $post->ID, 'action' => 'edit'], 'post.php'));
 
                 // If it post has a featured image.
                 if (has_post_thumbnail()) {
 
                     // Display post featured image with edit link.
                     echo '<a href="' . $link . '">';
-                    the_post_thumbnail(array(60, 60));
+                    the_post_thumbnail([60, 60]);
                     echo '</a>';
 
                 } else {
@@ -767,7 +767,7 @@ class PostType
                     if (isset($this->custom_populate_columns[$column]) && is_callable($this->custom_populate_columns[$column])) {
 
                         // Run the function.
-                        call_user_func_array($this->custom_populate_columns[$column], array($column, $post));
+                        call_user_func_array($this->custom_populate_columns[$column], [$column, $post]);
 
                     }
                 }
@@ -783,7 +783,7 @@ class PostType
      *
      * @param array $filters An array of taxonomy filters to display.
      */
-    function filters($filters = array())
+    function filters($filters = [])
     {
 
         $this->filters = $filters;
@@ -823,10 +823,10 @@ class PostType
                     $tax = get_taxonomy($tax_slug);
 
                     // Get taxonomy terms and order by name.
-                    $args = array(
+                    $args = [
                         'orderby' => 'name',
-                        'hide_empty' => false
-                    );
+                        'hide_empty' => false,
+                    ];
 
                     // Get taxonomy terms.
                     $terms = get_terms($tax_slug, $args);
@@ -905,7 +905,7 @@ class PostType
      *
      * @param array $columns An array of columns that are sortable.
      */
-    function sortable($columns = array())
+    function sortable($columns = [])
     {
 
         // Assign user defined sortable columns to object variable.
@@ -913,10 +913,10 @@ class PostType
 
         // Run filter to make columns sortable.
         $this->add_filter('manage_edit-' . $this->post_type_name . '_sortable_columns',
-            array(&$this, 'make_columns_sortable'));
+            [&$this, 'make_columns_sortable']);
 
         // Run action that sorts columns on request.
-        $this->add_action('load-edit.php', array(&$this, 'load_edit'));
+        $this->add_action('load-edit.php', [&$this, 'load_edit']);
     }
 
     /**
@@ -954,7 +954,7 @@ class PostType
     {
 
         // Run filter to sort columns when requested
-        $this->add_filter('request', array(&$this, 'sort_columns'));
+        $this->add_filter('request', [&$this, 'sort_columns']);
 
     }
 
@@ -1010,14 +1010,15 @@ class PostType
                     // Merge the query vars with our custom variables
                     $vars = array_merge(
                         $vars,
-                        array(
+                        [
                             'meta_key' => $meta_key,
-                            'orderby' => $orderby
-                        )
+                            'orderby' => $orderby,
+                        ]
                     );
                 }
             }
         }
+
         return $vars;
     }
 
@@ -1066,7 +1067,7 @@ class PostType
         $post = get_post();
         $singular = $this->singular;
 
-        $messages[$this->post_type_name] = array(
+        $messages[$this->post_type_name] = [
             0 => '',
             1 => sprintf(__('%s updated.', $this->textdomain), $singular),
             2 => __('Custom field updated.', $this->textdomain),
@@ -1083,7 +1084,7 @@ class PostType
                 $singular
             ),
             10 => sprintf(__('%s draft updated.', $this->textdomain), $singular),
-        );
+        ];
 
         return $messages;
     }
@@ -1101,7 +1102,7 @@ class PostType
         $singular = $this->singular;
         $plural = $this->plural;
 
-        $bulk_messages[$this->post_type_name] = array(
+        $bulk_messages[$this->post_type_name] = [
             'updated' => _n('%s ' . $singular . ' updated.', '%s ' . $plural . ' updated.', $bulk_counts['updated']),
             'locked' => _n('%s ' . $singular . ' not updated, somebody is editing it.',
                 '%s ' . $plural . ' not updated, somebody is editing them.', $bulk_counts['locked']),
@@ -1111,7 +1112,7 @@ class PostType
                 $bulk_counts['trashed']),
             'untrashed' => _n('%s ' . $singular . ' restored from the Trash.',
                 '%s ' . $plural . ' restored from the Trash.', $bulk_counts['untrashed']),
-        );
+        ];
 
         return $bulk_messages;
     }

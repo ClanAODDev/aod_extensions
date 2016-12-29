@@ -19,7 +19,7 @@ class ClanAnnouncements
 
     public function callback($attrs, $content = null)
     {
-        $attrs['limit'] = ($attrs['limit']) ?: 5;
+        $attrs['limit'] = ($attrs['limit']) ? : 5;
 
         if (empty($attrs['url'])) {
             return "Path to feed required";

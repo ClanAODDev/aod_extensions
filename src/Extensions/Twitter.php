@@ -17,6 +17,15 @@ class Twitter
         );
     }
 
+    /**
+     * @param array $config
+     * @return array
+     */
+    private function getConfig(array $config)
+    {
+        return $config['api']['twitter'];
+    }
+
     public function getfeed()
     {
         $twitter = new TwitterAPIExchange($this->settings());
@@ -41,17 +50,8 @@ class Twitter
             'oauth_access_token' => $twitter['oauth_access_token'],
             'oauth_access_token_secret' => $twitter['oauth_access_token_secret'],
             'consumer_key' => $twitter['consumer_key'],
-            'consumer_secret' => $twitter['consumer_secret']
+            'consumer_secret' => $twitter['consumer_secret'],
         ];
-    }
-
-    /**
-     * @param array $config
-     * @return array
-     */
-    private function getConfig(array $config)
-    {
-        return $config['api']['twitter'];
     }
 
 }
