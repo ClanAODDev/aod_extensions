@@ -13,6 +13,18 @@ class Divisions
     public function __construct()
     {
         $this->registerPostType();
+
+        add_filter( 'enter_title_here', [$this, 'changeTitleText'] );
+    }
+
+    public function changeTitleText( $title ){
+        $screen = get_current_screen();
+
+        if  ( 'divisions' == $screen->post_type ) {
+            $title = 'AOD Division Name';
+        }
+
+        return $title;
     }
 
     /**
