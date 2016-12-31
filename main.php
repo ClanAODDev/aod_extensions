@@ -3,7 +3,7 @@
  * Plugin Name: ClanAOD Extensions
  * Plugin URI:  https://github.com/flashadvocate/aod_extensions
  * Description: Extended functionality for ClanAOD Website WP implementation
- * Version:     0.1.0
+ * Version:     1.0.0
  * Author:      ClanAOD
  * Author URI:  https://clanaod.net/
  */
