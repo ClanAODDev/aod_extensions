@@ -11,6 +11,7 @@
 use ClanAOD\Extensions;
 
 defined('ABSPATH') or die();
+
 define('AOD_ROOT', dirname(__FILE__));
 define('AOD_TEMPLATES', AOD_ROOT . '/public/templates/');
 

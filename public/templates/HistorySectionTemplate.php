@@ -6,6 +6,7 @@
 
     <div class="timeline-content">
         <h2><?= $attr['section_title'] ?></h2>
+        <h2 class="date-text"><?= $attr['date_text'] ?></h2>
         <?= wpautop($content) ?>
     </div>
 </div>
