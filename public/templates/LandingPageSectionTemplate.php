@@ -2,9 +2,16 @@
 /**
  * Section Shortcode Template
  */
+
+$sectionBgStyle = ($sectionBg)
+    ? "style='background: url({$sectionBg}) {$sectionBgColor} no-repeat center 0'"
+    : null;
+
 ?>
 
-<section class="<?= $sectionClasses ?>" style="background: url(<?= ($sectionBg) ?: null ?>) <?= $sectionBgColor ?> no-repeat center 0">
+
+
+<section class="<?= $sectionClasses ?>" <?= $sectionBgStyle ?>>
     <div class="section-content-container <?= $centerContent ?>">
         <?php if ( ! empty($sectionImage)): ?>
             <div class="section--short-width">
