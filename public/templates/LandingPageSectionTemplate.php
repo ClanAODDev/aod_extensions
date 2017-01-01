@@ -4,7 +4,7 @@
  */
 ?>
 
-<section class="<?= $sectionClasses ?>">
+<section class="<?= $sectionClasses ?>" style="background: url(<?= ($sectionBg) ?: null ?>) <?= $sectionBgColor ?> no-repeat center 0">
     <div class="section-content-container <?= $centerContent ?>">
         <?php if ( ! empty($sectionImage)): ?>
             <div class="section--short-width">
