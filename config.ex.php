@@ -1,11 +1,18 @@
 <?php
 
+defined('ABSPATH') or die();
+
 /**
  * define application specific configurations
  */
 
 return $config = [
+
     'api' => [
+
+        'tracker' => [
+            'oauth_access_token' => '',
+        ],
 
         'twitter' => [
 
@@ -23,8 +30,6 @@ return $config = [
                 'exclude_replies' => true,
                 'include_rts' => false,
             ],
-
         ],
-
     ],
 ];

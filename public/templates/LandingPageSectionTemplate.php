@@ -6,10 +6,7 @@
 $sectionBgStyle = ($sectionBg)
     ? "style='background: url({$sectionBg}) {$sectionBgColor} no-repeat center 0'"
     : null;
-
 ?>
-
-
 
 <section class="<?= $sectionClasses ?>" <?= $sectionBgStyle ?>>
     <div class="section-content-container <?= $centerContent ?>">

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: dcdeaton
- * Date: 10/14/16
- * Time: 1:52 PM
- */
 
 namespace ClanAOD\Shortcodes;
 

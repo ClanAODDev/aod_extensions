@@ -109,8 +109,7 @@ class Divisions
                             } else {
                                 return _orig_send_attachment.apply(this, [props, attachment]);
                             }
-                            ;
-                        }
+                        };
                         wp.media.editor.open(button);
                         return false;
                     });
