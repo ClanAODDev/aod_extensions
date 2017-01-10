@@ -22,7 +22,11 @@ class Helpers
             return false;
         }
 
-        return new SimpleXMLElement(file_get_contents($path));
+        if ($data = file_get_contents($path)) {
+            return new SimpleXMLElement($data);
+        }
+
+        return false;
     }
 
     /**
