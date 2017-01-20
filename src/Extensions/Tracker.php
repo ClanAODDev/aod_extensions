@@ -42,7 +42,7 @@ class Tracker
     }
 
     /**
-     * @return object
+     * @return array|object
      */
     public function getDivisionInfo()
     {
