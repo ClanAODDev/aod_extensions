@@ -67,6 +67,11 @@ class Tracker
                 'timestamp' => time(),
             ];
 
+            // handle authentication errors gracefully
+            if (property_exists($feed, 'error')) {
+                return [];
+            }
+
             DBCache::store('division_data', $data);
         }
 
