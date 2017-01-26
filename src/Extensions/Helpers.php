@@ -92,8 +92,12 @@ class Helpers
      * @param array $divisions
      * @return array
      */
-    public static function filterDivisionCounts(array $divisions)
+    public static function filterDivisionCounts($divisions)
     {
+        if ( ! is_array($divisions)) {
+            return [];
+        }
+
         $data = [];
 
         foreach ($divisions as $division) {
