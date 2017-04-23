@@ -103,13 +103,14 @@ class ExtensionsPlugin
     }
 
     /**
+     * Landing Page section shortcode
+     *
      * @param $attr
      * @param $content
      * @param $tag
      */
     public function landingPageCallback($attr, $content, $tag)
     {
-
         $attr = shortcode_atts([
             'section_title' => '',
             'show_shadow' => false,
@@ -122,9 +123,6 @@ class ExtensionsPlugin
 
         $attr['section_title'] = urldecode($attr['section_title']);
 
-        /**
-         * Handle attribute logic
-         */
         $withShadow = ((bool) $attr['show_shadow']) ? 'with-shadow' : null;
         $centerContent = ((bool) $attr['centered']) ? 'section--centered' : null;
         $sectionClasses = "{$attr['section_class']} {$withShadow}";
@@ -132,8 +130,69 @@ class ExtensionsPlugin
         $sectionBgColor = ($attr['section_bg_color']) ?: null;
         $sectionBg = (wp_kses_post(wp_get_attachment_image_url($attr['section_bg'],
             'full')));
+        $sectionBgStyle = ($sectionBg)
+            ? "style='background: url({$sectionBg}) {$sectionBgColor} no-repeat center 0'"
+            : null;
 
-        require(AOD_TEMPLATES . '/LandingPageSectionTemplate.php');
+        $this->twig()->display('LandingSection.twig', [
+            'centerContent' => $centerContent,
+            'sectionClasses' => $sectionClasses,
+            'sectionBgStyle' => $sectionBgStyle,
+            'sectionImage' => $sectionImage,
+            'content' => wpautop($content),
+            'attr' => $attr
+        ]);
+    }
+
+    /**
+     * Singleton accessor for the twig environment
+     *
+     * @return Twig_Environment
+     */
+    private function twig()
+    {
+        static $twig;
+
+        if ($twig == null) {
+
+            $loader = new Twig_Loader_Filesystem(
+                $this->path('/aod_extensions/resources/views')
+            );
+
+            $twig = new Twig_Environment($loader, [
+                'debug' => WP_DEBUG,
+                'charset' => 'utf-8',
+                'cache' => false,
+                'auto_reload' => true,
+                'strict_variables' => true,
+                'autoescape' => false,
+                'optimizations' => -1,
+            ]);
+
+            if (WP_DEBUG) {
+                $twig->addExtension(new Twig_Extension_Debug());
+            }
+            $twig->addExtension(new TextExtension());
+            $twig->addFunction(new Twig_SimpleFunction('asset', [$this, 'asset']));
+            $twig->addFunction(new Twig_SimpleFunction('wp_create_nonce', 'wp_create_nonce'));
+            $twig->addFunction(new Twig_SimpleFunction('settings_fields', 'settings_fields'));
+            $twig->addFunction(new Twig_SimpleFunction('do_settings_sections', 'do_settings_sections'));
+            $twig->addFunction(new Twig_SimpleFunction('submit_button', 'submit_button'));
+            $twig->addFunction(new Twig_SimpleFunction('__', '__'));
+        }
+        return $twig;
+    }
+
+    /**
+     * Path relative to the plugin root
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    public function path($path)
+    {
+        return sprintf('%s/%s', rtrim(plugin_dir_path(AOD_ROOT), '/'), ltrim($path, '/'));
     }
 
     public function registerLandingPageSection()
@@ -239,57 +298,6 @@ class ExtensionsPlugin
                 'section_title' => '',
             ], $attr, $tag)
         ]);
-    }
-
-    /**
-     * Singleton accessor for the twig environment
-     *
-     * @return Twig_Environment
-     */
-    private function twig()
-    {
-        static $twig;
-
-        if ($twig == null) {
-
-            $loader = new Twig_Loader_Filesystem(
-                $this->path('/aod_extensions/resources/views')
-            );
-
-            $twig = new Twig_Environment($loader, [
-                'debug' => WP_DEBUG,
-                'charset' => 'utf-8',
-                'cache' => false,
-                'auto_reload' => true,
-                'strict_variables' => true,
-                'autoescape' => false,
-                'optimizations' => -1,
-            ]);
-
-            if (WP_DEBUG) {
-                $twig->addExtension(new Twig_Extension_Debug());
-            }
-            $twig->addExtension(new TextExtension());
-            $twig->addFunction(new Twig_SimpleFunction('asset', [$this, 'asset']));
-            $twig->addFunction(new Twig_SimpleFunction('wp_create_nonce', 'wp_create_nonce'));
-            $twig->addFunction(new Twig_SimpleFunction('settings_fields', 'settings_fields'));
-            $twig->addFunction(new Twig_SimpleFunction('do_settings_sections', 'do_settings_sections'));
-            $twig->addFunction(new Twig_SimpleFunction('submit_button', 'submit_button'));
-            $twig->addFunction(new Twig_SimpleFunction('__', '__'));
-        }
-        return $twig;
-    }
-
-    /**
-     * Path relative to the plugin root
-     *
-     * @param string $path
-     *
-     * @return string
-     */
-    public function path($path)
-    {
-        return sprintf('%s/%s', rtrim(plugin_dir_path(AOD_ROOT), '/'), ltrim($path, '/'));
     }
 
     /**
