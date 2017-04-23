@@ -1,0 +1,21 @@
+<h1>Twitter Activity</h1>
+
+{% if feed.errors is defined %}
+    {% for error in feed.errors %}
+        Error: {{ error.message }}
+    {% endfor %}
+{% endif %}
+
+<ul>
+    {% for entry in feed %}
+        <li>
+            <a href="https://twitter.com/officialclanaod" target="_blank">@officialclanaod</a>
+            {% if entry.retweeted_status is defined %}
+                {{ entry.retweeted_status.text|linkify }}
+            {% else %}
+                {{ entry.text|linkify }}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+

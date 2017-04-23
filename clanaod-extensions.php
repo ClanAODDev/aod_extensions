@@ -41,6 +41,6 @@ require_once dirname(__FILE__) . '/vendor/autoload.php';
  * Get stuff to do stuff
  */
 define('AOD_ROOT', dirname(__FILE__));
-define('AOD_TEMPLATES', AOD_ROOT . '/public/templates/');
+define('AOD_TEMPLATES', AOD_ROOT . '/resources/old/');
 
 new ExtensionsPlugin();

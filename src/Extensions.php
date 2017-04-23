@@ -3,6 +3,10 @@
 namespace ClanAOD;
 
 use CPT;
+use Twig_Environment;
+use Twig_Extension_Debug;
+use Twig_Loader_Filesystem;
+use Twig_SimpleFunction;
 
 /**
  * Class ExtensionsPlugin
@@ -227,7 +231,7 @@ final class ExtensionsPlugin
 
     public function clanAnnouncementsCallback($attrs, $content = null)
     {
-        $attrs['limit'] = ($attrs['limit']) ?: 5;
+        $attrs['limit'] = (isset($attrs['limit'])) ?: 5;
 
         if (empty($attrs['url'])) {
             return "Path to feed required";
@@ -256,7 +260,8 @@ final class ExtensionsPlugin
     public function twitterFeedCallback()
     {
         $twitter_data = DBCache::get('twitter_data');
-        if (is_array($twitter_data)) {
+
+        if (is_array($twitter_data) && isset($twitter_data['divisions'])) {
             if ($twitter_data['timestamp'] > time() - 10 * 60) {
                 $feed = $twitter_data['divisions'];
             }
@@ -274,7 +279,60 @@ final class ExtensionsPlugin
             DBCache::store('twitter_data', $data);
         }
 
-        require(AOD_TEMPLATES . '/TwitterFeedTemplate.php');
+        $this->twig()->display('TwitterFeedTemplate.twig', [
+            'feed' => $feed,
+        ]);
+    }
+
+    /**
+     * Singleton accessor for the twig environment
+     *
+     * @return Twig_Environment
+     */
+    private function twig()
+    {
+        static $twig;
+
+        if ($twig == null) {
+
+            $loader = new Twig_Loader_Filesystem(
+                $this->path('/aod_extensions/resources/views')
+            );
+
+            $twig = new Twig_Environment($loader, [
+                'debug' => WP_DEBUG,
+                'charset' => 'utf-8',
+                'cache' => false,
+                'auto_reload' => true,
+                'strict_variables' => true,
+                'autoescape' => false,
+                'optimizations' => -1,
+            ]);
+
+            if (WP_DEBUG) {
+                $twig->addExtension(new Twig_Extension_Debug());
+            }
+            $twig->addExtension(new AutoLinkTwigExtension());
+            $twig->addFunction(new Twig_SimpleFunction('asset', [$this, 'asset']));
+            $twig->addFunction(new Twig_SimpleFunction('wp_create_nonce', 'wp_create_nonce'));
+            $twig->addFunction(new Twig_SimpleFunction('settings_fields', 'settings_fields'));
+            $twig->addFunction(new Twig_SimpleFunction('do_settings_sections', 'do_settings_sections'));
+            $twig->addFunction(new Twig_SimpleFunction('submit_button', 'submit_button'));
+            $twig->addFunction(new Twig_SimpleFunction('__', '__'));
+        }
+        return $twig;
+    }
+
+    /**
+     * Path relative to the plugin root
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    public function path($path)
+    {
+        return sprintf('%s/%s', rtrim(plugin_dir_path(AOD_ROOT), '/'), ltrim($path, '/'));
     }
 
     public function registerDivisionSection()
@@ -349,7 +407,7 @@ final class ExtensionsPlugin
 
     public function addMetaboxCallback()
     {
-       $divisionFields = [
+        $divisionFields = [
             [
                 'id' => 'abbreviation',
                 'label' => 'Abbreviation',
@@ -488,5 +546,145 @@ final class ExtensionsPlugin
 
 }
 
+/**
+ * Class AutoLinkTwigExtension
+ * @package ClanAOD
+ */
+class AutoLinkTwigExtension extends \Twig_Extension
+{
 
+    public function getName()
+    {
+        return 'clanaod';
+    }
+
+    /**
+     * Turn all URLs in clickable links.
+     *
+     * @param string $value
+     * @param array $protocols 'http'/'https', 'mail' and also 'ftp', 'scp', 'tel', etc
+     * @param array $attributes HTML attributes for the link
+     * @param string $mode normal or all
+     * @return string
+     */
+    public function linkify($value, $protocols = ['http', 'mail'], array $attributes = [], $mode = 'normal')
+    {
+        if ( ! isset($value)) {
+            return null;
+        }
+
+        // Link attributes
+        $attr = '';
+        foreach ($attributes as $key => $val) {
+            $attr .= ' ' . $key . '="' . htmlentities($val) . '"';
+        }
+
+        $links = [];
+
+        // Extract existing links and tags
+        $text = preg_replace_callback('~(<a .*?>.*?</a>|<.*?>)~i', function ($match) use (&$links) {
+            return '<' . array_push($links, $match[1]) . '>';
+        }, $value);
+
+        // Extract text links for each protocol
+        foreach ((array) $protocols as $protocol) {
+            switch ($protocol) {
+                case 'http':
+                case 'https':
+                    $text = $this->linkifyHttp($protocol, $text, $links, $attr, $mode);
+                    break;
+                case 'mail':
+                    $text = $this->linkifyMail($text, $links, $attr);
+                    break;
+                default:
+                    $text = $this->linkifyOther($protocol, $text, $links, $attr, $mode);
+                    break;
+            }
+        }
+
+        // Insert all link
+        return preg_replace_callback('/<(\d+)>/', function ($match) use (&$links) {
+            return $links[$match[1] - 1];
+        }, $text);
+    }
+
+    /**
+     * Linkify a HTTP(S) link.
+     *
+     * @param string $protocol 'http' or 'https'
+     * @param string $text
+     * @param array $links OUTPUT
+     * @param string $attr
+     * @param string $mode
+     * @return mixed
+     */
+    protected function linkifyHttp($protocol, $text, array &$links, $attr, $mode)
+    {
+        $regexp = $mode != 'all'
+            ? '~(?:(https?)://([^\s<>]+)|(?<!\w@)\b(www\.[^\s<>]+?\.[^\s<>]+))(?<![\.,:;\?!\'"\|])~i'
+            : '~(?:(https?)://([^\s<>]+)|(?<!\w@)\b([^\s<>@]+?\.[^\s<>]+)(?<![\.,:]))~i';
+
+        return preg_replace_callback($regexp, function ($match) use ($protocol, &$links, $attr) {
+            if ($match[1]) {
+                $protocol = $match[1];
+            }
+            $link = $match[2] ?: $match[3];
+
+            return '<' . array_push($links, '<a' . $attr . ' href="' . $protocol . '://' . $link . '">'
+                    . rtrim($link, '/') . '</a>') . '>';
+        }, $text);
+    }
+
+    /**
+     * Linkify a mail link.
+     *
+     * @param string $text
+     * @param array $links OUTPUT
+     * @param string $attr
+     * @return mixed
+     */
+    protected function linkifyMail($text, array &$links, $attr)
+    {
+        $regexp = '~([^\s<>]+?@[^\s<>]+?\.[^\s<>]+)(?<![\.,:;\?!\'"\|])~';
+
+        return preg_replace_callback($regexp, function ($match) use (&$links, $attr) {
+            return '<' . array_push($links, '<a' . $attr . ' href="mailto:' . $match[1] . '">' . $match[1] . '</a>')
+                . '>';
+        }, $text);
+    }
+
+    /**
+     * Linkify a link.
+     *
+     * @param string $protocol
+     * @param string $text
+     * @param array $links OUTPUT
+     * @param string $attr
+     * @param string $mode
+     * @return mixed
+     */
+    protected function linkifyOther($protocol, $text, array &$links, $attr, $mode)
+    {
+        if (strpos($protocol, ':') === false) {
+            $protocol .= in_array($protocol, ['ftp', 'tftp', 'ssh', 'scp']) ? '://' : ':';
+        }
+
+        $regexp = $mode != 'all'
+            ? '~' . preg_quote($protocol, '~') . '([^\s<>]+)(?<![\.,:;\?!\'"\|])~i'
+            : '~([^\s<>]+)(?<![\.,:])~i';
+
+        return preg_replace_callback($regexp, function ($match) use ($protocol, &$links, $attr) {
+            return '<' . array_push($links, '<a' . $attr . ' href="' . $protocol . $match[1] . '">' . $match[1]
+                    . '</a>') . '>';
+        }, $text);
+    }
+
+    public function getFilters()
+    {
+        return [
+            new \Twig_SimpleFilter('linkify', [$this, 'linkify'], ['pre_escape' => 'html', 'is_safe' => ['html']])
+        ];
+    }
+
+}
 
