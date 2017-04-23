@@ -43,7 +43,4 @@ require_once dirname(__FILE__) . '/vendor/autoload.php';
 define('AOD_ROOT', dirname(__FILE__));
 define('AOD_TEMPLATES', AOD_ROOT . '/public/templates/');
 
-/**
- * Touch our singleton instance
- */
 new ExtensionsPlugin();
