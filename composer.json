@@ -1,14 +1,15 @@
 {
   "require": {
     "j7mbo/twitter-api-php": "~1.0",
-    "twig/twig": "^1.32"
+    "twig/twig": "^1.32",
+    "jjgrainger/wp-custom-post-type-class": "dev-master"
   },
   "require-dev": {
     "symfony/var-dumper": "~3.1"
   },
   "autoload": {
-    "psr-4": {
-      "ClanAOD\\": "src"
-    }
+    "classmap": [
+      "src"
+    ]
   }
 }

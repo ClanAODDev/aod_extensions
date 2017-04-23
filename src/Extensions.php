@@ -2,14 +2,14 @@
 
 namespace ClanAOD;
 
+use CPT;
+
 /**
  * Class ExtensionsPlugin
  * @package ClanAOD
  */
 final class ExtensionsPlugin
 {
-
-    private static $instance;
 
     private $divisionFields = [
         [
@@ -46,7 +46,7 @@ final class ExtensionsPlugin
     /**
      * Initialize all the components of our plugin
      */
-    private function bootstrap()
+    public function bootstrap()
     {
         if ( ! file_exists(AOD_ROOT . '/config.php')) {
             wp_die(require(AOD_TEMPLATES . '/InvalidConfigTemplate.php'));
@@ -64,7 +64,6 @@ final class ExtensionsPlugin
         /**
          * Action hook callbacks
          */
-        add_action('plugins_loaded', [$this, 'registerPostType']);
         add_action('login_enqueue_scripts', [$this, 'customLoginPage']);
         add_action('add_meta_boxes', [$this, 'addMetaBoxes']);
         add_action('admin_footer', [$this, 'adminFooter']);
@@ -79,35 +78,8 @@ final class ExtensionsPlugin
         add_filter('enter_title_here', [$this, 'changeTitleText']);
         add_filter('login_headerurl', [$this, 'aodLogoUrl']);
         add_filter('login_headertitle', [$this, 'aodSiteTitle']);
-    }
 
-    /**
-     * Singleton constructor
-     *
-     * @param string $init
-     *
-     * @return static
-     */
-    public static function init($init)
-    {
-        if (self::$instance != null) {
-            throw new \RuntimeException('Unable to bind ClanAOD Extensions Plugin');
-        }
-        self::$instance = new static($init);
-        return self::$instance;
-    }
-
-    /**
-     * Singleton accessor
-     *
-     * @return static
-     */
-    public static function getInstance()
-    {
-        if (self::$instance == null) {
-            throw new \RuntimeException('Tried to access uninitialized ClanAOD Extensions Plugin instance');
-        }
-        return self::$instance;
+        $this->registerPostType();
     }
 
     /**
@@ -125,6 +97,128 @@ final class ExtensionsPlugin
         ];
 
         return get_posts($args);
+    }
+
+    public function landingPageCallback($attr, $content, $tag)
+    {
+
+        $attr = shortcode_atts([
+            'section_title' => '',
+            'show_shadow' => false,
+            'section_img' => 0,
+            'section_bg_color' => 0,
+            'centered' => false,
+            'section_bg' => 0,
+            'section_class' => 'section',
+        ], $attr, $tag);
+
+        $attr['section_title'] = urldecode($attr['section_title']);
+
+        /**
+         * Handle attribute logic
+         */
+        $withShadow = ((bool) $attr['show_shadow']) ? 'with-shadow' : null;
+        $centerContent = ((bool) $attr['centered']) ? 'section--centered' : null;
+        $sectionClasses = "{$attr['section_class']} {$withShadow}";
+        $sectionImage = (wp_kses_post(wp_get_attachment_image($attr['section_img'], 'full')));
+        $sectionBgColor = ($attr['section_bg_color']) ?: null;
+        $sectionBg = (wp_kses_post(wp_get_attachment_image_url($attr['section_bg'],
+            'full')));
+        require(AOD_TEMPLATES . '/LandingPageSectionTemplate.php');
+    }
+
+    public function registerLandingPageSection()
+    {
+        $arguments = [
+            'label' => 'Landing Page Section',
+            'listItemImage' => 'dashicons-admin-page',
+            'post-type' => ['page'],
+            'attrs' => [
+                [
+                    'label' => 'Section Title',
+                    'type' => 'text',
+                    'attr' => 'section_title',
+                    'encode' => true,
+                ],
+                [
+                    'label' => 'Section Background Color',
+                    'type' => 'text',
+                    'attr' => 'section_bg_color',
+                ],
+                [
+                    'label' => 'Section Background',
+                    'type' => 'attachment',
+                    'attr' => 'section_bg',
+                    'libraryType' => ['image'],
+                    'addButton' => 'Select Background',
+                    'frameTitle' => 'Add section background image',
+                ],
+                [
+                    'label' => 'Section Graphic (optional)',
+                    'type' => 'attachment',
+                    'attr' => 'section_img',
+                    'libraryType' => ['image'],
+                    'addButton' => 'Select Image',
+                    'frameTitle' => 'Add section image',
+                ],
+                [
+                    'label' => 'Center content',
+                    'type' => 'checkbox',
+                    'attr' => 'centered',
+                ],
+                [
+                    'label' => 'Show shadow',
+                    'type' => 'checkbox',
+                    'attr' => 'show_shadow',
+                ],
+                [
+                    'label' => 'Section Class (optional)',
+                    'type' => 'text',
+                    'attr' => 'section_class',
+                    'meta' => [
+                        'placeholder' => 'CSS Class Name',
+                    ],
+                ],
+            ],
+            'inner_content' => [
+                'label' => 'Section Content',
+            ],
+        ];
+        shortcode_ui_register_for_shortcode('section', $arguments);
+    }
+
+    public function registerHistorySection()
+    {
+        $arguments = [
+            'label' => 'History Content Section',
+            'listItemImage' => 'dashicons-admin-page',
+            'post-type' => 'page',
+            'attrs' => [
+                [
+                    'label' => 'Date text',
+                    'type' => 'text',
+                    'attr' => 'date_text',
+                ],
+                [
+                    'label' => 'Section title',
+                    'type' => 'text',
+                    'attr' => 'section_title',
+                ],
+            ],
+            'inner_content' => [
+                'label' => 'Section Content',
+            ],
+        ];
+        shortcode_ui_register_for_shortcode('history-section', $arguments);
+    }
+
+    public function historySectionCallback($attr, $content, $tag)
+    {
+        $attr = shortcode_atts([
+            'date_text' => '',
+            'section_title' => '',
+        ], $attr, $tag);
+        require(AOD_TEMPLATES . '/HistorySectionTemplate.php');
     }
 
     public function clanAnnouncementsCallback($attrs, $content = null)
@@ -216,10 +310,6 @@ final class ExtensionsPlugin
             require(AOD_TEMPLATES . '/RequiresShortcakeUI.php');
         }
     }
-
-    /**
-     * AOD Customizations
-     */
 
     public function customLoginPage()
     { ?>
@@ -372,29 +462,21 @@ final class ExtensionsPlugin
     /**
      * Register our divisions post type
      */
-    private function registerPostType()
+    public function registerPostType()
     {
-        $divisions = new PostType(
-            [
-                'post_type_name' => 'divisions',
-                'singular' => 'Division',
-                'plural' => 'Divisions',
-                'slug' => 'divisions',
-                'has_archive' => true,
-            ]
-        );
+        $divisions = new CPT([
+            'post_type_name' => 'divisions',
+            'singular' => 'Division',
+            'plural' => 'Divisions',
+            'slug' => 'divisions',
+            'has_archive' => true,
+        ]);
 
         $divisions->menu_icon('dashicons-admin-multisite');
+
+        return $divisions;
     }
 
-    private function initShortcodes()
-    {
-        new Shortcodes\LandingPageSection();
-        new Shortcodes\DivisionSection();
-        new Shortcodes\ClanAnnouncements();
-        new Shortcodes\HistorySection();
-        new Shortcodes\TwitterFeed();
-    }
 }
 
 

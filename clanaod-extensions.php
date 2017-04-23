@@ -9,6 +9,8 @@
  * Author URI:  https://clanaod.net/
  */
 
+use ClanAOD\ExtensionsPlugin;
+
 if ( ! defined('ABSPATH')) {
     _e('Unable to determine the path to WordPress root.');
     return;
@@ -44,4 +46,4 @@ define('AOD_TEMPLATES', AOD_ROOT . '/public/templates/');
 /**
  * Touch our singleton instance
  */
-\ClanAOD\ExtensionsPlugin::init(__FILE__);
+new ExtensionsPlugin();

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5721eeb6dff0a4c0dfca9de2d9a41a0a",
+    "content-hash": "bb5751c65c1f9a84253752942ffff0c4",
     "packages": [
         {
             "name": "j7mbo/twitter-api-php",
@@ -55,6 +55,44 @@
                 "twitter"
             ],
             "time": "2015-08-03T21:35:18+00:00"
+        },
+        {
+            "name": "jjgrainger/wp-custom-post-type-class",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jjgrainger/wp-custom-post-type-class.git",
+                "reference": "012861247b20c07307e706eecae5689dbfda98e8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jjgrainger/wp-custom-post-type-class/zipball/012861247b20c07307e706eecae5689dbfda98e8",
+                "reference": "012861247b20c07307e706eecae5689dbfda98e8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "CPT": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Joe Grainger",
+                    "email": "hello@joegrainger.co.uk",
+                    "homepage": "http://jjgrainger.co.uk"
+                }
+            ],
+            "description": "A single class to help you build more advanced custom post types quickly.",
+            "homepage": "https://github.com/jjgrainger/wp-custom-post-type-class",
+            "time": "2016-08-24 08:37:12"
         },
         {
             "name": "twig/twig",
@@ -248,7 +286,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "jjgrainger/wp-custom-post-type-class": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
