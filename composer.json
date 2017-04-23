@@ -1,5 +1,4 @@
 {
-  "name": "dcdeaton/clanaod_extensions",
   "require": {
     "j7mbo/twitter-api-php": "~1.0",
     "twig/twig": "^1.32"
@@ -9,13 +8,7 @@
   },
   "autoload": {
     "psr-4": {
-      "ClanAOD\\Extensions\\": "src/"
+      "ClanAOD\\": "src"
     }
-  },
-  "authors": [
-    {
-      "name": "Chris Deaton",
-      "email": "dcdeaton@ncsu.edu"
-    }
-  ]
+  }
 }
