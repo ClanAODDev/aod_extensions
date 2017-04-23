@@ -132,6 +132,7 @@ class ExtensionsPlugin
         $sectionBgColor = ($attr['section_bg_color']) ?: null;
         $sectionBg = (wp_kses_post(wp_get_attachment_image_url($attr['section_bg'],
             'full')));
+
         require(AOD_TEMPLATES . '/LandingPageSectionTemplate.php');
     }
 
@@ -221,9 +222,16 @@ class ExtensionsPlugin
         shortcode_ui_register_for_shortcode('history-section', $arguments);
     }
 
+    /**
+     * History section shortcode callback
+     *
+     * @param $attr
+     * @param $content
+     * @param $tag
+     */
     public function historySectionCallback($attr, $content, $tag)
     {
-        $this->twig()->display('HistorySectionTemplate.twig', [
+        $this->twig()->display('HistorySection.twig', [
             'templateDirectory' => get_template_directory_uri(),
             'content' => wpautop($content),
             'attr' => shortcode_atts([
@@ -284,7 +292,13 @@ class ExtensionsPlugin
         return sprintf('%s/%s', rtrim(plugin_dir_path(AOD_ROOT), '/'), ltrim($path, '/'));
     }
 
-    public function clanAnnouncementsCallback($attrs, $content = null)
+    /**
+     * Clan announcements section shortcode
+     *
+     * @param $attrs
+     * @return string
+     */
+    public function clanAnnouncementsCallback($attrs)
     {
         $attrs['limit'] = (isset($attrs['limit'])) ?: 5;
 
@@ -292,19 +306,29 @@ class ExtensionsPlugin
             return "Path to feed required";
         }
 
-        $this->twig()->display('ClanAnnouncementsTemplate.twig', [
+        $this->twig()->display('ClanAnnouncements.twig', [
             'threads' => Helpers::getRssFeed($attrs['url']),
             'attrs' => $attrs
         ]);
     }
 
+    /**
+     * Division section shortcode
+     *
+     * @param $attr
+     * @param $content
+     * @param $tag
+     */
     public function divisionSectionCallback($attr, $content, $tag)
     {
-        $attr = shortcode_atts([
-            'section_title' => '',
-        ], $attr, $tag);
-
-        require(AOD_TEMPLATES . '/DivisionSectionTemplate.php');
+        $this->twig()->display('DivisionSection.twig', [
+            'threads' => Helpers::getRssFeed($attrs['url']),
+            'sectionLink' => Helpers::anchored($attr['section_title']),
+            'content' => wpautop($content),
+            'attr' => shortcode_atts([
+                'section_title' => '',
+            ], $attr, $tag)
+        ]);
     }
 
     /**
@@ -335,7 +359,7 @@ class ExtensionsPlugin
             DBCache::store('twitter_data', $data);
         }
 
-        $this->twig()->display('TwitterFeedTemplate.twig', [
+        $this->twig()->display('TwitterFeed.twig', [
             'feed' => $feed,
         ]);
     }

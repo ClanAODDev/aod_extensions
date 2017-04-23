@@ -1,7 +1,5 @@
 <?php
-/**
- * Section Shortcode Template
- */
+
 
 $sectionBgStyle = ($sectionBg)
     ? "style='background: url({$sectionBg}) {$sectionBgColor} no-repeat center 0'"
