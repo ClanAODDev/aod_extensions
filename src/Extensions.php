@@ -223,24 +223,13 @@ class ExtensionsPlugin
 
     public function historySectionCallback($attr, $content, $tag)
     {
-        $attr = shortcode_atts([
-            'date_text' => '',
-            'section_title' => '',
-        ], $attr, $tag);
-        require(AOD_TEMPLATES . '/HistorySectionTemplate.php');
-    }
-
-    public function clanAnnouncementsCallback($attrs, $content = null)
-    {
-        $attrs['limit'] = (isset($attrs['limit'])) ?: 5;
-
-        if (empty($attrs['url'])) {
-            return "Path to feed required";
-        }
-
-        $this->twig()->display('ClanAnnouncementsTemplate.twig', [
-            'threads' => Helpers::getRssFeed($attrs['url']),
-            'attrs' => $attrs
+        $this->twig()->display('HistorySectionTemplate.twig', [
+            'templateDirectory' => get_template_directory_uri(),
+            'content' => wpautop($content),
+            'attr' => shortcode_atts([
+                'date_text' => '',
+                'section_title' => '',
+            ], $attr, $tag)
         ]);
     }
 
@@ -293,6 +282,20 @@ class ExtensionsPlugin
     public function path($path)
     {
         return sprintf('%s/%s', rtrim(plugin_dir_path(AOD_ROOT), '/'), ltrim($path, '/'));
+    }
+
+    public function clanAnnouncementsCallback($attrs, $content = null)
+    {
+        $attrs['limit'] = (isset($attrs['limit'])) ?: 5;
+
+        if (empty($attrs['url'])) {
+            return "Path to feed required";
+        }
+
+        $this->twig()->display('ClanAnnouncementsTemplate.twig', [
+            'threads' => Helpers::getRssFeed($attrs['url']),
+            'attrs' => $attrs
+        ]);
     }
 
     public function divisionSectionCallback($attr, $content, $tag)
