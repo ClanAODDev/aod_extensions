@@ -3,6 +3,7 @@
 namespace ClanAOD;
 
 use CPT;
+use Jasny\Twig\TextExtension;
 use Twig_Environment;
 use Twig_Extension_Debug;
 use Twig_Loader_Filesystem;
@@ -12,7 +13,7 @@ use Twig_SimpleFunction;
  * Class ExtensionsPlugin
  * @package ClanAOD
  */
-final class ExtensionsPlugin
+class ExtensionsPlugin
 {
 
     /**
@@ -312,7 +313,7 @@ final class ExtensionsPlugin
             if (WP_DEBUG) {
                 $twig->addExtension(new Twig_Extension_Debug());
             }
-            $twig->addExtension(new AutoLinkTwigExtension());
+            $twig->addExtension(new TextExtension());
             $twig->addFunction(new Twig_SimpleFunction('asset', [$this, 'asset']));
             $twig->addFunction(new Twig_SimpleFunction('wp_create_nonce', 'wp_create_nonce'));
             $twig->addFunction(new Twig_SimpleFunction('settings_fields', 'settings_fields'));
@@ -545,146 +546,3 @@ final class ExtensionsPlugin
     }
 
 }
-
-/**
- * Class AutoLinkTwigExtension
- * @package ClanAOD
- */
-class AutoLinkTwigExtension extends \Twig_Extension
-{
-
-    public function getName()
-    {
-        return 'clanaod';
-    }
-
-    /**
-     * Turn all URLs in clickable links.
-     *
-     * @param string $value
-     * @param array $protocols 'http'/'https', 'mail' and also 'ftp', 'scp', 'tel', etc
-     * @param array $attributes HTML attributes for the link
-     * @param string $mode normal or all
-     * @return string
-     */
-    public function linkify($value, $protocols = ['http', 'mail'], array $attributes = [], $mode = 'normal')
-    {
-        if ( ! isset($value)) {
-            return null;
-        }
-
-        // Link attributes
-        $attr = '';
-        foreach ($attributes as $key => $val) {
-            $attr .= ' ' . $key . '="' . htmlentities($val) . '"';
-        }
-
-        $links = [];
-
-        // Extract existing links and tags
-        $text = preg_replace_callback('~(<a .*?>.*?</a>|<.*?>)~i', function ($match) use (&$links) {
-            return '<' . array_push($links, $match[1]) . '>';
-        }, $value);
-
-        // Extract text links for each protocol
-        foreach ((array) $protocols as $protocol) {
-            switch ($protocol) {
-                case 'http':
-                case 'https':
-                    $text = $this->linkifyHttp($protocol, $text, $links, $attr, $mode);
-                    break;
-                case 'mail':
-                    $text = $this->linkifyMail($text, $links, $attr);
-                    break;
-                default:
-                    $text = $this->linkifyOther($protocol, $text, $links, $attr, $mode);
-                    break;
-            }
-        }
-
-        // Insert all link
-        return preg_replace_callback('/<(\d+)>/', function ($match) use (&$links) {
-            return $links[$match[1] - 1];
-        }, $text);
-    }
-
-    /**
-     * Linkify a HTTP(S) link.
-     *
-     * @param string $protocol 'http' or 'https'
-     * @param string $text
-     * @param array $links OUTPUT
-     * @param string $attr
-     * @param string $mode
-     * @return mixed
-     */
-    protected function linkifyHttp($protocol, $text, array &$links, $attr, $mode)
-    {
-        $regexp = $mode != 'all'
-            ? '~(?:(https?)://([^\s<>]+)|(?<!\w@)\b(www\.[^\s<>]+?\.[^\s<>]+))(?<![\.,:;\?!\'"\|])~i'
-            : '~(?:(https?)://([^\s<>]+)|(?<!\w@)\b([^\s<>@]+?\.[^\s<>]+)(?<![\.,:]))~i';
-
-        return preg_replace_callback($regexp, function ($match) use ($protocol, &$links, $attr) {
-            if ($match[1]) {
-                $protocol = $match[1];
-            }
-            $link = $match[2] ?: $match[3];
-
-            return '<' . array_push($links, '<a' . $attr . ' href="' . $protocol . '://' . $link . '">'
-                    . rtrim($link, '/') . '</a>') . '>';
-        }, $text);
-    }
-
-    /**
-     * Linkify a mail link.
-     *
-     * @param string $text
-     * @param array $links OUTPUT
-     * @param string $attr
-     * @return mixed
-     */
-    protected function linkifyMail($text, array &$links, $attr)
-    {
-        $regexp = '~([^\s<>]+?@[^\s<>]+?\.[^\s<>]+)(?<![\.,:;\?!\'"\|])~';
-
-        return preg_replace_callback($regexp, function ($match) use (&$links, $attr) {
-            return '<' . array_push($links, '<a' . $attr . ' href="mailto:' . $match[1] . '">' . $match[1] . '</a>')
-                . '>';
-        }, $text);
-    }
-
-    /**
-     * Linkify a link.
-     *
-     * @param string $protocol
-     * @param string $text
-     * @param array $links OUTPUT
-     * @param string $attr
-     * @param string $mode
-     * @return mixed
-     */
-    protected function linkifyOther($protocol, $text, array &$links, $attr, $mode)
-    {
-        if (strpos($protocol, ':') === false) {
-            $protocol .= in_array($protocol, ['ftp', 'tftp', 'ssh', 'scp']) ? '://' : ':';
-        }
-
-        $regexp = $mode != 'all'
-            ? '~' . preg_quote($protocol, '~') . '([^\s<>]+)(?<![\.,:;\?!\'"\|])~i'
-            : '~([^\s<>]+)(?<![\.,:])~i';
-
-        return preg_replace_callback($regexp, function ($match) use ($protocol, &$links, $attr) {
-            return '<' . array_push($links, '<a' . $attr . ' href="' . $protocol . $match[1] . '">' . $match[1]
-                    . '</a>') . '>';
-        }, $text);
-    }
-
-    public function getFilters()
-    {
-        return [
-            new \Twig_SimpleFilter('linkify', [$this, 'linkify'], ['pre_escape' => 'html', 'is_safe' => ['html']])
-        ];
-    }
-
-}
-

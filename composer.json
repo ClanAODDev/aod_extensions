@@ -2,7 +2,8 @@
   "require": {
     "j7mbo/twitter-api-php": "~1.0",
     "twig/twig": "^1.32",
-    "jjgrainger/wp-custom-post-type-class": "dev-master"
+    "jjgrainger/wp-custom-post-type-class": "dev-master",
+    "jasny/twig-extensions": "^1.1"
   },
   "require-dev": {
     "symfony/var-dumper": "~3.1"
