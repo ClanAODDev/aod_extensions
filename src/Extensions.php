@@ -11,29 +11,9 @@ use CPT;
 final class ExtensionsPlugin
 {
 
-    private $divisionFields = [
-        [
-            'id' => 'abbreviation',
-            'label' => 'Abbreviation',
-            'type' => 'text',
-        ],
-        [
-            'id' => 'application_id',
-            'label' => 'Forum Application ID',
-            'type' => 'text',
-        ],
-        [
-            'id' => 'division_icon',
-            'label' => 'Division Icon',
-            'type' => 'media',
-        ],
-        [
-            'id' => 'header_image',
-            'label' => 'Header Image',
-            'type' => 'media',
-        ],
-    ];
-
+    /**
+     * ExtensionsPlugin constructor.
+     */
     public function __construct()
     {
         add_action('init', [$this, 'shortcodeUIDetection']);
@@ -83,6 +63,24 @@ final class ExtensionsPlugin
     }
 
     /**
+     * Register our divisions post type
+     */
+    public function registerPostType()
+    {
+        $divisions = new CPT([
+            'post_type_name' => 'divisions',
+            'singular' => 'Division',
+            'plural' => 'Divisions',
+            'slug' => 'divisions',
+            'has_archive' => true,
+        ]);
+
+        $divisions->menu_icon('dashicons-admin-multisite');
+
+        return $divisions;
+    }
+
+    /**
      * Return configured query of divisions
      *
      * @return array
@@ -99,6 +97,11 @@ final class ExtensionsPlugin
         return get_posts($args);
     }
 
+    /**
+     * @param $attr
+     * @param $content
+     * @param $tag
+     */
     public function landingPageCallback($attr, $content, $tag)
     {
 
@@ -209,6 +212,7 @@ final class ExtensionsPlugin
                 'label' => 'Section Content',
             ],
         ];
+
         shortcode_ui_register_for_shortcode('history-section', $arguments);
     }
 
@@ -345,10 +349,33 @@ final class ExtensionsPlugin
 
     public function addMetaboxCallback()
     {
+       $divisionFields = [
+            [
+                'id' => 'abbreviation',
+                'label' => 'Abbreviation',
+                'type' => 'text',
+            ],
+            [
+                'id' => 'application_id',
+                'label' => 'Forum Application ID',
+                'type' => 'text',
+            ],
+            [
+                'id' => 'division_icon',
+                'label' => 'Division Icon',
+                'type' => 'media',
+            ],
+            [
+                'id' => 'header_image',
+                'label' => 'Header Image',
+                'type' => 'media',
+            ],
+        ];
+
         wp_nonce_field('division_settings_data', 'division_settings_nonce');
         $output = '';
 
-        foreach ($this->divisionFields as $field) {
+        foreach ($divisionFields as $field) {
             $label = '<label for="' . $field['id'] . '">' . $field['label'] . '</label>';
             $db_value = get_post_meta($post->ID, 'division_settings_' . $field['id'], true);
             switch ($field['type']) {
@@ -457,24 +484,6 @@ final class ExtensionsPlugin
         }
 
         return $title;
-    }
-
-    /**
-     * Register our divisions post type
-     */
-    public function registerPostType()
-    {
-        $divisions = new CPT([
-            'post_type_name' => 'divisions',
-            'singular' => 'Division',
-            'plural' => 'Divisions',
-            'slug' => 'divisions',
-            'has_archive' => true,
-        ]);
-
-        $divisions->menu_icon('dashicons-admin-multisite');
-
-        return $divisions;
     }
 
 }
