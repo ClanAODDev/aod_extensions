@@ -238,50 +238,9 @@ class ExtensionsPlugin
             return "Path to feed required";
         }
 
-        $threads = Helpers::getRssFeed($attrs['url']);
-
-        require(AOD_TEMPLATES . '/ClanAnnouncementsTemplate.php');
-    }
-
-    public function divisionSectionCallback($attr, $content, $tag)
-    {
-        $attr = shortcode_atts([
-            'section_title' => '',
-        ], $attr, $tag);
-
-        require(AOD_TEMPLATES . '/DivisionSectionTemplate.php');
-    }
-
-    /**
-     * Shortcode callback
-     *
-     * No attributes or content to worry about, so we
-     * don't both with method arguments
-     */
-    public function twitterFeedCallback()
-    {
-        $twitter_data = DBCache::get('twitter_data');
-
-        if (is_array($twitter_data) && isset($twitter_data['divisions'])) {
-            if ($twitter_data['timestamp'] > time() - 10 * 60) {
-                $feed = $twitter_data['divisions'];
-            }
-        }
-
-        if (empty($feed)) {
-
-            $feed = (new Twitter())->getfeed();
-
-            $data = [
-                'twitter_result' => $feed,
-                'timestamp' => time(),
-            ];
-
-            DBCache::store('twitter_data', $data);
-        }
-
-        $this->twig()->display('TwitterFeedTemplate.twig', [
-            'feed' => $feed,
+        $this->twig()->display('ClanAnnouncementsTemplate.twig', [
+            'threads' => Helpers::getRssFeed($attrs['url']),
+            'attrs' => $attrs
         ]);
     }
 
@@ -334,6 +293,48 @@ class ExtensionsPlugin
     public function path($path)
     {
         return sprintf('%s/%s', rtrim(plugin_dir_path(AOD_ROOT), '/'), ltrim($path, '/'));
+    }
+
+    public function divisionSectionCallback($attr, $content, $tag)
+    {
+        $attr = shortcode_atts([
+            'section_title' => '',
+        ], $attr, $tag);
+
+        require(AOD_TEMPLATES . '/DivisionSectionTemplate.php');
+    }
+
+    /**
+     * Shortcode callback
+     *
+     * No attributes or content to worry about, so we
+     * don't both with method arguments
+     */
+    public function twitterFeedCallback()
+    {
+        $twitter_data = DBCache::get('twitter_data');
+
+        if (is_array($twitter_data) && isset($twitter_data['divisions'])) {
+            if ($twitter_data['timestamp'] > time() - 10 * 60) {
+                $feed = $twitter_data['divisions'];
+            }
+        }
+
+        if (empty($feed)) {
+
+            $feed = (new Twitter())->getfeed();
+
+            $data = [
+                'twitter_result' => $feed,
+                'timestamp' => time(),
+            ];
+
+            DBCache::store('twitter_data', $data);
+        }
+
+        $this->twig()->display('TwitterFeedTemplate.twig', [
+            'feed' => $feed,
+        ]);
     }
 
     public function registerDivisionSection()

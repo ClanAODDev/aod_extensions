@@ -1,0 +1,16 @@
+{% if not threads %}
+    <small>Something went wrong when attempting to load the RSS feed.</small>
+{% else %}
+
+    <ul>
+        {% for thread in threads.channel.item %}
+            {% if loop.index <= attrs['limit'] %}
+                <li>
+                    <a href="{{ thread.guid }}">{{ thread.title }}</a>
+                    <br />Posted {{ thread.pubDate }}
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+{% endif %}
