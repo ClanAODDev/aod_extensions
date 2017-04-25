@@ -335,7 +335,8 @@ class ExtensionsPlugin
 
         $this->twig()->display('DivisionSection.twig', [
             'attr' => $attr,
-            'sectionTitle' => Helpers::anchored($attr['section_title']),
+            'sectionLink' => Helpers::anchored($attr['section_title']),
+            'sectionTitle' => $attr['section_title'],
             'content' => wpautop($content),
         ]);
     }
