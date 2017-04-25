@@ -329,13 +329,14 @@ class ExtensionsPlugin
      */
     public function divisionSectionCallback($attr, $content, $tag)
     {
+        $attr = shortcode_atts([
+            'section_title' => '',
+        ], $attr, $tag);
+
         $this->twig()->display('DivisionSection.twig', [
-            'threads' => Helpers::getRssFeed($attrs['url']),
-            'sectionLink' => Helpers::anchored($attr['section_title']),
+            'attr' => $attr,
+            'sectionTitle' => Helpers::anchored($attr['section_title']),
             'content' => wpautop($content),
-            'attr' => shortcode_atts([
-                'section_title' => '',
-            ], $attr, $tag)
         ]);
     }
 
