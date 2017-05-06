@@ -444,6 +444,9 @@ class ExtensionsPlugin
         );
     }
 
+    /**
+     * @param $post
+     */
     public function addMetaboxCallback($post)
     {
         $divisionFields = [
@@ -500,6 +503,9 @@ class ExtensionsPlugin
         echo $output;
     }
 
+    /**
+     * add media library handler
+     */
     public function adminFooter()
     {
         ?>
@@ -532,7 +538,11 @@ class ExtensionsPlugin
         </script><?php
     }
 
-    public function saveMetaPost()
+    /**
+     * @param $post_id
+     * @return mixed
+     */
+    public function saveMetaPost($post_id)
     {
         if ( ! isset($_POST['division_settings_nonce'])) {
             return $post_id;
