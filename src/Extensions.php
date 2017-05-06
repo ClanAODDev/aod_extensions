@@ -16,6 +16,29 @@ use Twig_SimpleFunction;
 class ExtensionsPlugin
 {
 
+    public $divisionFields = [
+        [
+            'id' => 'abbreviation',
+            'label' => 'Abbreviation',
+            'type' => 'text',
+        ],
+        [
+            'id' => 'application_id',
+            'label' => 'Forum Application ID',
+            'type' => 'text',
+        ],
+        [
+            'id' => 'division_icon',
+            'label' => 'Division Icon',
+            'type' => 'media',
+        ],
+        [
+            'id' => 'header_image',
+            'label' => 'Header Image',
+            'type' => 'media',
+        ],
+    ];
+
     /**
      * ExtensionsPlugin constructor.
      */
@@ -449,33 +472,10 @@ class ExtensionsPlugin
      */
     public function addMetaboxCallback($post)
     {
-        $divisionFields = [
-            [
-                'id' => 'abbreviation',
-                'label' => 'Abbreviation',
-                'type' => 'text',
-            ],
-            [
-                'id' => 'application_id',
-                'label' => 'Forum Application ID',
-                'type' => 'text',
-            ],
-            [
-                'id' => 'division_icon',
-                'label' => 'Division Icon',
-                'type' => 'media',
-            ],
-            [
-                'id' => 'header_image',
-                'label' => 'Header Image',
-                'type' => 'media',
-            ],
-        ];
-
         wp_nonce_field('division_settings_data', 'division_settings_nonce');
         $output = '';
 
-        foreach ($divisionFields as $field) {
+        foreach ($this->divisionFields as $field) {
             $label = '<label for="' . $field['id'] . '">' . $field['label'] . '</label>';
             $db_value = get_post_meta($post->ID, 'division_settings_' . $field['id'], true);
             switch ($field['type']) {
@@ -557,7 +557,7 @@ class ExtensionsPlugin
             return $post_id;
         }
 
-        foreach ($this->fields as $field) {
+        foreach ($this->divisionFields as $field) {
             if (isset($_POST[$field['id']])) {
                 switch ($field['type']) {
                     case 'email':
