@@ -444,7 +444,7 @@ class ExtensionsPlugin
         );
     }
 
-    public function addMetaboxCallback()
+    public function addMetaboxCallback($post)
     {
         $divisionFields = [
             [
