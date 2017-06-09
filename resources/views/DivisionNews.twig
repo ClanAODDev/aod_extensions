@@ -1,9 +1,12 @@
-{% if not posts %}
-    <small>No division news available.</small>
-{% else %}
-    <ul>
-        {% for post in posts %}
-            <li><a href="{{ post.link }}">{{ post.title }}</a></li>
-        {% endfor %}
-    </ul>
-{% endif %}
+<div class="section-sub-section automenu">
+    <h2 id="division-news">Division News</h2>
+    {% if not posts %}
+        <p>No division news available.</p>
+    {% else %}
+        <ul>
+            {% for post in posts %}
+                <li><a href="{{ post.link }}">{{ post.title }}</a> - {{ post.date }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>

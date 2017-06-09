@@ -242,11 +242,10 @@ class ExtensionsPlugin
         if ($query->have_posts()) {
             while ($query->have_posts()) {
                 $query->the_post();
-                $link = get_the_permalink();
-                $title = get_the_title();
                 $posts[] = [
-                    'link' => $link,
-                    'title' => $title
+                    'link' => get_the_permalink(),
+                    'date' => get_the_date(),
+                    'title' => get_the_title()
                 ];
             }
         }
