@@ -400,7 +400,7 @@ class ExtensionsPlugin
             'attr' => $attr,
             'sectionLink' => Helpers::anchored($attr['section_title']),
             'sectionTitle' => $attr['section_title'],
-            'content' => wpautop($content),
+            'content' => wpautop(do_shortcode($content)),
         ]);
     }
 
