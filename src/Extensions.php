@@ -8,9 +8,11 @@ use Twig_Environment;
 use Twig_Extension_Debug;
 use Twig_Loader_Filesystem;
 use Twig_SimpleFunction;
+use WP_Query;
 
 /**
  * Class ExtensionsPlugin
+ *
  * @package ClanAOD
  */
 class ExtensionsPlugin
@@ -68,6 +70,7 @@ class ExtensionsPlugin
         add_shortcode('section', [$this, 'landingPageCallback']);
         add_shortcode('show_clan_announcements', [$this, 'clanAnnouncementsCallback']);
         add_shortcode('twitter-feed', [$this, 'twitterFeedCallback']);
+        add_shortcode('division-news', [$this, 'divisionNewsCallback']);
 
         /**
          * Action hook callbacks
@@ -203,6 +206,7 @@ class ExtensionsPlugin
             $twig->addFunction(new Twig_SimpleFunction('submit_button', 'submit_button'));
             $twig->addFunction(new Twig_SimpleFunction('__', '__'));
         }
+
         return $twig;
     }
 
@@ -216,6 +220,42 @@ class ExtensionsPlugin
     public function path($path)
     {
         return sprintf('%s/%s', rtrim(plugin_dir_path(AOD_ROOT), '/'), ltrim($path, '/'));
+    }
+
+    function divisionNewsCallback($attr)
+    {
+        $args = [
+            'post_type' => 'post',
+            'posts_per_page' => 5,
+            'tax_query' => [
+                [
+                    'taxonomy' => 'category',
+                    'field' => 'name',
+                    'terms' => $attr['division']
+                ]
+            ]
+        ];
+
+        $query = new WP_Query($args);
+        $posts = [];
+
+        if ($query->have_posts()) {
+            while ($query->have_posts()) {
+                $query->the_post();
+                $link = get_the_permalink();
+                $title = get_the_title();
+                $posts[] = [
+                    'link' => $link,
+                    'title' => $title
+                ];
+            }
+        }
+
+        wp_reset_postdata();
+
+        $this->twig()->display('DivisionNews.twig', [
+            'posts' => $posts
+        ]);
     }
 
     public function registerLandingPageSection()
@@ -445,6 +485,7 @@ class ExtensionsPlugin
         </style>
     <?php }
 
+
     function aodLogoUrl()
     {
         return home_url();
@@ -511,26 +552,26 @@ class ExtensionsPlugin
         ?>
         <script>
             // https://codestag.com/how-to-use-wordpress-3-5-media-uploader-in-theme-options/
-            jQuery(document).ready(function ($) {
+            jQuery (document).ready (function ($) {
                 if (typeof wp.media !== 'undefined') {
                     var _custom_media = true,
                         _orig_send_attachment = wp.media.editor.send.attachment;
-                    $('.rational-metabox-media').click(function (e) {
+                    $ ('.rational-metabox-media').click (function (e) {
                         var send_attachment_bkp = wp.media.editor.send.attachment;
-                        var button = $(this);
-                        var id = button.attr('id').replace('_button', '');
+                        var button = $ (this);
+                        var id = button.attr ('id').replace ('_button', '');
                         _custom_media = true;
                         wp.media.editor.send.attachment = function (props, attachment) {
                             if (_custom_media) {
-                                $("#" + id).val(attachment.url);
+                                $ ("#" + id).val (attachment.url);
                             } else {
-                                return _orig_send_attachment.apply(this, [props, attachment]);
+                                return _orig_send_attachment.apply (this, [props, attachment]);
                             }
                         };
-                        wp.media.editor.open(button);
+                        wp.media.editor.open (button);
                         return false;
                     });
-                    $('.add_media').on('click', function () {
+                    $ ('.add_media').on ('click', function () {
                         _custom_media = false;
                     });
                 }

@@ -1,0 +1,10 @@
+<h2>Division news</h2>
+{% if not posts %}
+    <small>No division news available.</small>
+{% else %}
+    <ul>
+        {% for post in posts %}
+            <li><a href="{{ post.link }}">{{ post.title }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
