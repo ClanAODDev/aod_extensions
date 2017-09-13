@@ -1,0 +1,15 @@
+<section class="apply-info" style="background-image: url({{ stream.video_banner }}); background-size: cover; background-position: 27% 27%">
+	<div class="section-content-container section--centered">
+		
+		<div class="section-blurb">
+			{#{% if twitch is null %}#}
+				{#<h2>OFFLINE</h2>#}
+			{#{% else %}#}
+				{#<h2>{{ dump(twitch.channel) }}</h2>#}
+				{#{% if twitch.channel.video_banner %}#}
+					{#<img src="{{ twitch.channel.video_banner }}" alt="">#}
+				{#{% endif %}#}
+			{#{% endif %}#}
+		</div>
+	</div>
+</section>

@@ -2,6 +2,7 @@
 
 namespace ClanAOD;
 
+
 use CPT;
 use Jasny\Twig\TextExtension;
 use Twig_Environment;
@@ -71,6 +72,7 @@ class ExtensionsPlugin
         add_shortcode('show_clan_announcements', [$this, 'clanAnnouncementsCallback']);
         add_shortcode('twitter-feed', [$this, 'twitterFeedCallback']);
         add_shortcode('division-news', [$this, 'divisionNewsCallback']);
+        add_shortcode('twitch', [$this, 'twitchCallback']);
 
         /**
          * Action hook callbacks
@@ -82,6 +84,7 @@ class ExtensionsPlugin
         add_action('register_shortcode_ui', [$this, 'registerHistorySection']);
         add_action('register_shortcode_ui', [$this, 'registerDivisionSection']);
         add_action('register_shortcode_ui', [$this, 'registerLandingPageSection']);
+        add_action('register_shortcode_ui', [$this, 'registerTwitchSection']);
 
         /**
          * filter hook callbacks
@@ -222,6 +225,22 @@ class ExtensionsPlugin
         return sprintf('%s/%s', rtrim(plugin_dir_path(AOD_ROOT), '/'), ltrim($path, '/'));
     }
 
+    public function twitchCallback($attr)
+    {
+        $attr = shortcode_atts([
+            'client_id' => '',
+            'channel' => '',
+        ], $attr);
+
+        $client = new Twitch('6px6l0rm6q1igku4e3n9dhcafyr7ow', $attr['channel']);
+        $channel = $client->getChannel();
+
+        $this->twig()->display('TwitchSection.twig', [
+            'attr' => $attr,
+            'stream' => $channel
+        ]);
+    }
+
     function divisionNewsCallback($attr)
     {
         $args = [
@@ -315,6 +334,29 @@ class ExtensionsPlugin
             ],
         ];
         shortcode_ui_register_for_shortcode('section', $arguments);
+    }
+
+    public function registerTwitchSection()
+    {
+        $arguments = [
+            'label' => 'Landing Page Twitch Section',
+            'listItemImage' => 'dashicons-admin-page',
+            'post-type' => ['page'],
+            'attrs' => [
+                [
+                    'label' => 'Twitch Client ID',
+                    'type' => 'text',
+                    'attr' => 'client_id',
+                ],
+                [
+                    'label' => 'Twitch Channel',
+                    'type' => 'text',
+                    'attr' => 'channel',
+                ]
+            ]
+        ];
+
+        shortcode_ui_register_for_shortcode('twitch', $arguments);
     }
 
     public function registerHistorySection()
@@ -550,31 +592,31 @@ class ExtensionsPlugin
     {
         ?>
         <script>
-            // https://codestag.com/how-to-use-wordpress-3-5-media-uploader-in-theme-options/
-            jQuery (document).ready (function ($) {
-                if (typeof wp.media !== 'undefined') {
-                    var _custom_media = true,
-                        _orig_send_attachment = wp.media.editor.send.attachment;
-                    $ ('.rational-metabox-media').click (function (e) {
-                        var send_attachment_bkp = wp.media.editor.send.attachment;
-                        var button = $ (this);
-                        var id = button.attr ('id').replace ('_button', '');
-                        _custom_media = true;
-                        wp.media.editor.send.attachment = function (props, attachment) {
-                            if (_custom_media) {
-                                $ ("#" + id).val (attachment.url);
-                            } else {
-                                return _orig_send_attachment.apply (this, [props, attachment]);
-                            }
-                        };
-                        wp.media.editor.open (button);
-                        return false;
-                    });
-                    $ ('.add_media').on ('click', function () {
-                        _custom_media = false;
-                    });
-                }
-            });
+          // https://codestag.com/how-to-use-wordpress-3-5-media-uploader-in-theme-options/
+          jQuery(document).ready(function ($) {
+            if (typeof wp.media !== 'undefined') {
+              var _custom_media = true,
+                _orig_send_attachment = wp.media.editor.send.attachment;
+              $('.rational-metabox-media').click(function (e) {
+                var send_attachment_bkp = wp.media.editor.send.attachment;
+                var button = $(this);
+                var id = button.attr('id').replace('_button', '');
+                _custom_media = true;
+                wp.media.editor.send.attachment = function (props, attachment) {
+                  if (_custom_media) {
+                    $('#' + id).val(attachment.url);
+                  } else {
+                    return _orig_send_attachment.apply(this, [props, attachment]);
+                  }
+                };
+                wp.media.editor.open(button);
+                return false;
+              });
+              $('.add_media').on('click', function () {
+                _custom_media = false;
+              });
+            }
+          });
         </script><?php
     }
 
