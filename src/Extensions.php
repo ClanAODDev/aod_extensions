@@ -419,7 +419,7 @@ class ExtensionsPlugin
         }
 
         $this->twig()->display('ClanAnnouncements.twig', [
-            'threads' => Helpers::getRssFeed($attrs['url']),
+            'threads' => Helpers::getRssFeed($attrs['url']) ?: [],
             'attrs' => $attrs
         ]);
     }

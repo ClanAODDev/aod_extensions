@@ -6,6 +6,7 @@ use SimpleXMLElement;
 
 /**
  * Class Helpers
+ *
  * @package ClanAOD
  */
 class Helpers
@@ -23,7 +24,13 @@ class Helpers
         }
 
         if ($data = file_get_contents($path)) {
-            return new SimpleXMLElement($data);
+            $simpleXML = new SimpleXMLElement($data);
+
+            if (method_exists($simpleXML, 'item')) {
+                return $simpleXML;
+            }
+
+            return [];
         }
 
         return false;
@@ -64,6 +71,7 @@ class Helpers
 
     /**
      * Drop duplicate
+     *
      * @param $string
      * @return string
      */
@@ -84,7 +92,7 @@ class Helpers
         $regex = "/(http|https)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
 
         return (preg_match($regex, $string, $url))
-            ? preg_replace($regex, "<a href=\"{$url[0]}\" target='_blank'>{$url[0]}</a> ", $string)
+            ? preg_replace($regex, "<a href=\"{$url[0]}\" target=\"_blank\">{$url[0]}</a> ", $string)
             : $string;
     }
 
