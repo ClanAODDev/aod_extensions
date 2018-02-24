@@ -26,7 +26,7 @@ class Helpers
         if ($data = file_get_contents($path)) {
             $simpleXML = new SimpleXMLElement($data);
 
-            if (method_exists($simpleXML, 'item')) {
+            if (property_exists($simpleXML, 'channel')) {
                 return $simpleXML;
             }
 
