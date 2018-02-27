@@ -232,7 +232,7 @@ class ExtensionsPlugin
             'channel' => '',
         ], $attr);
 
-        $client = new Twitch('6px6l0rm6q1igku4e3n9dhcafyr7ow', $attr['channel']);
+        $client = new Twitch($attr['channel']);
         $channel = $client->getChannel();
 
         $this->twig()->display('TwitchSection.twig', [

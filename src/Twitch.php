@@ -36,14 +36,26 @@ class Twitch
     private $content;
 
     /**
+     * @var mixed
+     */
+    private $config;
+
+    /**
      * Twitch constructor.
      *
      * @param $clientId
      * @param $channel
      */
-    public function __construct($clientId, $channel)
+    public function __construct($channel)
     {
-        $this->clientId = $clientId;
+        $this->config = require(AOD_ROOT . '/config.php');
+
+        if (!isset($this->config['api']['twitch'])) {
+            return;
+        }
+
+        $this->clientId = $this->config['api']['twitch']['client_id'];
+
         $this->channel = $channel;
     }
 
@@ -54,7 +66,7 @@ class Twitch
     {
         $this->content = $this->getRequest('/streams/');
 
-        if ( ! $this->content->stream) {
+        if ( ! property_exists($this->content, 'stream')) {
             $this->content = $this->getRequest('/channels/');
         }
 
