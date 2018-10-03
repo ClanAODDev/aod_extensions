@@ -21,7 +21,7 @@ class Tracker
     /**
      * @var string
      */
-    private $base = "https://clanaod.net/tracker/api/v1";
+    private $base = "https://tracker.clanaod.net/api/v1";
 
     /**
      * @var array
