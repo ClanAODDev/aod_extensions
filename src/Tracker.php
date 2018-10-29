@@ -6,6 +6,7 @@ namespace ClanAOD;
  * Mechanism for requests to the Tracker API
  *
  * Class Tracker
+ *
  * @package ClanAOD
  */
 class Tracker
@@ -55,12 +56,13 @@ class Tracker
 
         if (empty($feed)) {
 
-            $feed = $this->setURL("/divisions")->setHeaders([
-                'Accept: application/json',
-                'Content-type: application/json',
-                'Authorization: Bearer ' .
-                $this->config['api']['tracker']['oauth_access_token'],
-            ])->request();
+            $feed = $this->setURL("/divisions")
+                ->setHeaders([
+                    'Accept: application/json',
+                    'Content-type: application/json',
+                    'Authorization: Bearer ' .
+                    $this->config['api']['tracker']['oauth_access_token'],
+                ])->request();
 
             $data = [
                 'divisions' => $feed,
@@ -88,6 +90,8 @@ class Tracker
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
         $result = curl_exec($ch);
         curl_close($ch);
