@@ -22,7 +22,8 @@ class Tracker
     /**
      * @var string
      */
-    private $base = "https://tracker.clanaod.net/api/v1";
+//    private $base = "https://tracker.clanaod.net/api/v1";
+    private $base = "http://tracker_v3.test/api/v1";
 
     /**
      * @var array
@@ -119,6 +120,68 @@ class Tracker
         $this->url = $this->base . $string;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTsInfo()
+    {
+        $ts_data = DBCache::get('ts_data');
+
+        if (is_array($ts_data)) {
+            if ($ts_data['timestamp'] > time() - 10 * 60) {
+                $count = $ts_data['count'];
+            }
+        }
+
+        if (empty($count)) {
+
+            $count = $this->setURL("/ts-count")->setHeaders([
+                'Accept: application/json',
+                'Content-type: application/json',
+                'Authorization: Bearer ' .
+                $this->config['api']['tracker']['oauth_access_token'],
+            ])->request();
+
+            $data = [
+                'count' => $count,
+                'timestamp' => time(),
+            ];
+
+            // handle authentication errors gracefully
+            if (property_exists($count, 'error')) {
+                return [];
+            }
+
+            DBCache::store('ts_data', $data);
+        }
+
+        return $count;
+    }
+
+    /**
+     * Get discord online count
+     * https://discordapp.com/api/guilds/507758143774916609/widget.json
+     */
+    public function getDiscordInfo()
+    {
+        $url = 'https://discordapp.com/api/guilds/507758143774916609/widget.json';
+
+        $count = DBCache::get('discord_data');
+
+        if ( ! $count) {
+            $data = json_decode(file_get_contents($url));
+
+            if ( ! is_object($data)) {
+                return 'ERROR';
+            }
+
+            $count = count($data->members);
+            DBCache::store('discord_data', $count);
+        }
+
+        return $count;
     }
 
 }

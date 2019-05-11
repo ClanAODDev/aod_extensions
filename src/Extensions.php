@@ -73,6 +73,7 @@ class ExtensionsPlugin
         add_shortcode('twitter-feed', [$this, 'twitterFeedCallback']);
         add_shortcode('division-news', [$this, 'divisionNewsCallback']);
         add_shortcode('twitch', [$this, 'twitchCallback']);
+        add_shortcode('commo', [$this, 'commoDetailsCallback']);
 
         /**
          * Action hook callbacks
@@ -132,11 +133,28 @@ class ExtensionsPlugin
     }
 
     /**
+     * @param $attr
+     */
+    public function commoDetailsCallback($attr)
+    {
+        $tsCount = (new Tracker())->getTsInfo();
+        $discord = (new Tracker())->getDiscordInfo();
+
+        $this->twig()->display('CommoDetails.twig', [
+            'ts_count' => $tsCount->data,
+            'discord_count' => $discord,
+        ]);
+    }
+
+    /**
      * Landing Page section shortcode
      *
      * @param $attr
      * @param $content
      * @param $tag
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function landingPageCallback($attr, $content, $tag)
     {
@@ -152,8 +170,8 @@ class ExtensionsPlugin
 
         $attr['section_title'] = urldecode($attr['section_title']);
 
-        $withShadow = ((bool) $attr['show_shadow']) ? 'with-shadow' : null;
-        $centerContent = ((bool) $attr['centered']) ? 'section--centered' : null;
+        $withShadow = ((bool)$attr['show_shadow']) ? 'with-shadow' : null;
+        $centerContent = ((bool)$attr['centered']) ? 'section--centered' : null;
         $sectionClasses = "{$attr['section_class']} {$withShadow}";
         $sectionImage = (wp_kses_post(wp_get_attachment_image($attr['section_img'], 'full')));
         $sectionBgColor = ($attr['section_bg_color']) ?: null;
