@@ -142,7 +142,7 @@ class ExtensionsPlugin
 
         $this->twig()->display('CommoDetails.twig', [
             'ts_count' => $tsCount->data,
-            'discord_count' => $discord,
+            'discord_count' => $discord->data,
         ]);
     }
 

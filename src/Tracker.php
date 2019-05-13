@@ -161,23 +161,37 @@ class Tracker
 
     /**
      * Get discord online count
-     * https://discordapp.com/api/guilds/507758143774916609/widget.json
      */
     public function getDiscordInfo()
     {
-        $url = 'https://discordapp.com/api/guilds/507758143774916609/widget.json';
+        $discord_data = DBCache::get('discord_data');
 
-        $count = DBCache::get('discord_data');
+        if (is_array($discord_data)) {
+            if ($discord_data['timestamp'] > time() - 10 * 60) {
+                $count = $discord_data['count'];
+            }
+        }
 
-        if ( ! $count) {
-            $data = json_decode(file_get_contents($url));
+        if (empty($count)) {
 
-            if ( ! is_object($data)) {
-                return 'ERROR';
+            $count = $this->setURL("/discord-count")->setHeaders([
+                'Accept: application/json',
+                'Content-type: application/json',
+                'Authorization: Bearer ' .
+                $this->config['api']['tracker']['oauth_access_token'],
+            ])->request();
+
+            $data = [
+                'count' => $count,
+                'timestamp' => time(),
+            ];
+
+            // handle authentication errors gracefully
+            if (property_exists($count, 'error')) {
+                return [];
             }
 
-            $count = count($data->members);
-            DBCache::store('discord_data', $count);
+            DBCache::store('discord_data', $data);
         }
 
         return $count;

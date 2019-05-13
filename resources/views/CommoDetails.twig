@@ -1,4 +1,9 @@
 <div class="commo-bar">
-	<p class="commo-item"><strong>TEAMSPEAK ONLINE</strong>: {{ ts_count }}</p>
-	<p class="commo-item"><strong>DISCORD ONLINE</strong>: {{ discord_count }}</p>
+	<p class="commo-item"><i class="fab fa-teamspeak fa-lg"></i>
+		<strong>TEAMSPEAK </strong>: {{ ts_count.online }} / {{ ts_count.max }}
+	</p>
+	<p class="commo-item">
+		<i class="fab fa-discord fa-lg"></i>
+		<strong>DISCORD</strong>: {{ discord_count.online + discord_count.idle + discord_count.dnd }} / {{ discord_count.total }}
+	</p>
 </div>
