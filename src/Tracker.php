@@ -128,10 +128,8 @@ class Tracker
     {
         $ts_data = DBCache::get('ts_data');
 
-        if (is_array($ts_data)) {
-            if ($ts_data['timestamp'] > time() - 10 * 60) {
-                $count = $ts_data['count'];
-            }
+        if (is_array($ts_data) && $this->isExpired($ts_data['timestamp'])) {
+            $count = $ts_data['count'];
         }
 
         if (empty($count)) {
@@ -160,16 +158,23 @@ class Tracker
     }
 
     /**
+     * @param $timestamp
+     * @return bool
+     */
+    private function isExpired($timestamp): bool
+    {
+        return $timestamp > time() - 10 * 60;
+    }
+
+    /**
      * Get discord online count
      */
     public function getDiscordInfo()
     {
         $discord_data = DBCache::get('discord_data');
 
-        if (is_array($discord_data)) {
-            if ($discord_data['timestamp'] > time() - 10 * 60) {
-                $count = $discord_data['count'];
-            }
+        if (is_array($discord_data) && $this->isExpired($discord_data['timestamp'])) {
+            $count = $discord_data['count'];
         }
 
         if (empty($count)) {
