@@ -1,9 +1,17 @@
 <div class="commo-bar">
 	<p class="commo-item"><i class="fab fa-teamspeak fa-lg"></i>
-		<strong>TEAMSPEAK </strong>: {{ ts_count.online }} / {{ ts_count.max }}
+		{% if ts_count %}
+			<strong>TEAMSPEAK </strong> {{ ts_count.online }} / {{ ts_count.max }}
+		{% else %}
+			<strong>TEAMSPEAK </strong>UNKNOWN
+		{% endif %}
 	</p>
 	<p class="commo-item">
 		<i class="fab fa-discord fa-lg"></i>
-		<strong>DISCORD</strong>: {{ discord_count.online + discord_count.idle + discord_count.dnd }} / {{ discord_count.total }}
+		{% if discord_count %}
+			<strong>DISCORD</strong> {{ discord_count.online + discord_count.idle + discord_count.dnd }} / {{ discord_count.total }}
+		{% else %}
+			<strong>DISCORD</strong> UNKNOWN
+		{% endif %}
 	</p>
 </div>
