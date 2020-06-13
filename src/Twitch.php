@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: dcdeaton
- * Date: 9/12/17
- * Time: 10:10 PM
- */
 
 namespace ClanAOD;
-
 
 /**
  * Class Twitch
